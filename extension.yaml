@@ -1,0 +1,7 @@
+Id: allkeyshop-extension
+Name: AllKeyShop Price Monitor
+Author: Sassoanarchico
+Version: 0.1.0
+Description: Monitor game prices from AllKeyShop and get notified about free games
+Website: https://github.com/yourname/allkeyshop-playnite
+Module: AllKeyShopExtension.dll
