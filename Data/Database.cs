@@ -87,6 +87,7 @@ namespace AllKeyShopExtension.Data
                     MigrateAddColumn(connection, "WatchedGames", "AccountPrice", "REAL");
                     MigrateAddColumn(connection, "WatchedGames", "AccountSeller", "TEXT");
                     MigrateAddColumn(connection, "WatchedGames", "AllKeyShopPageUrl", "TEXT");
+                    MigrateAddColumn(connection, "WatchedGames", "ImageUrl", "TEXT");
                 }
             }
         }
@@ -187,9 +188,9 @@ namespace AllKeyShopExtension.Data
                     var query = @"
                         INSERT OR REPLACE INTO WatchedGames 
                         (GameName, LastPrice, LastSeller, LastUrl, LastUpdate, PriceThreshold, DateAdded,
-                         KeyPrice, KeySeller, AccountPrice, AccountSeller, AllKeyShopPageUrl)
+                         KeyPrice, KeySeller, AccountPrice, AccountSeller, AllKeyShopPageUrl, ImageUrl)
                         VALUES (@GameName, @LastPrice, @LastSeller, @LastUrl, @LastUpdate, @PriceThreshold, @DateAdded,
-                                @KeyPrice, @KeySeller, @AccountPrice, @AccountSeller, @AllKeyShopPageUrl)";
+                                @KeyPrice, @KeySeller, @AccountPrice, @AccountSeller, @AllKeyShopPageUrl, @ImageUrl)";
                     using (var command = new SQLiteCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@GameName", game.GameName);
@@ -204,6 +205,7 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@AccountPrice", (object)game.AccountPrice ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@ImageUrl", (object)game.ImageUrl ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -223,7 +225,7 @@ namespace AllKeyShopExtension.Data
                             LastUpdate = @LastUpdate, PriceThreshold = @PriceThreshold,
                             KeyPrice = @KeyPrice, KeySeller = @KeySeller,
                             AccountPrice = @AccountPrice, AccountSeller = @AccountSeller,
-                            AllKeyShopPageUrl = @AllKeyShopPageUrl
+                            AllKeyShopPageUrl = @AllKeyShopPageUrl, ImageUrl = @ImageUrl
                         WHERE Id = @Id";
                     using (var command = new SQLiteCommand(query, connection))
                     {
@@ -238,6 +240,7 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@AccountPrice", (object)game.AccountPrice ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@ImageUrl", (object)game.ImageUrl ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -414,6 +417,7 @@ namespace AllKeyShopExtension.Data
                 game.AccountPrice = ReadDecimalOrNull(reader, "AccountPrice");
                 game.AccountSeller = ReadStringOrNull(reader, "AccountSeller");
                 game.AllKeyShopPageUrl = ReadStringOrNull(reader, "AllKeyShopPageUrl");
+                game.ImageUrl = ReadStringOrNull(reader, "ImageUrl");
             }
             catch { /* columns may not exist yet */ }
 

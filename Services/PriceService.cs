@@ -43,7 +43,7 @@ namespace AllKeyShopExtension.Services
         /// <summary>
         /// Add a watched game with a specific AllKeyShop page URL (from search results).
         /// </summary>
-        public bool AddWatchedGame(string gameName, string allKeyShopPageUrl, decimal? priceThreshold = null)
+        public bool AddWatchedGame(string gameName, string allKeyShopPageUrl, decimal? priceThreshold = null, string imageUrl = null)
         {
             if (string.IsNullOrWhiteSpace(gameName))
                 return false;
@@ -57,6 +57,7 @@ namespace AllKeyShopExtension.Services
                 GameName = gameName,
                 AllKeyShopPageUrl = allKeyShopPageUrl,
                 PriceThreshold = priceThreshold,
+                ImageUrl = imageUrl,
                 DateAdded = DateTime.Now
             };
 

@@ -1,4 +1,4 @@
-<UserControl x:Class="AllKeyShopExtension.Views.AllKeyShopSidebarView"
+﻿<UserControl x:Class="AllKeyShopExtension.Views.AllKeyShopSidebarView"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
@@ -7,39 +7,21 @@
              d:DesignHeight="700" d:DesignWidth="1000"
              Foreground="{DynamicResource TextBrush}">
     <UserControl.Resources>
-        <!-- DataGrid implicit styles for proper theme adaptation -->
-        <Style TargetType="DataGridRow">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-            <Style.Triggers>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#18808080"/>
-                </Trigger>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="#28808080"/>
-                </Trigger>
-            </Style.Triggers>
+        <Style x:Key="IconBtn" TargetType="Button">
+            <Setter Property="Padding" Value="6,4"/>
+            <Setter Property="Margin" Value="1,0"/>
+            <Setter Property="MinWidth" Value="28"/>
+            <Setter Property="MinHeight" Value="24"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
-        <Style TargetType="DataGridCell">
-            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="BorderThickness" Value="0"/>
-            <Style.Triggers>
-                <Trigger Property="IsSelected" Value="True">
-                    <Setter Property="Background" Value="Transparent"/>
-                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-                </Trigger>
-            </Style.Triggers>
-        </Style>
-        <Style TargetType="DataGridColumnHeader">
-            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Padding" Value="8,6"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="BorderBrush" Value="#40808080"/>
-            <Setter Property="BorderThickness" Value="0,0,0,2"/>
+        <Style x:Key="ToolbarBtn" TargetType="Button">
+            <Setter Property="Padding" Value="12,7"/>
+            <Setter Property="Margin" Value="0,0,6,0"/>
+            <Setter Property="Cursor" Value="Hand"/>
         </Style>
     </UserControl.Resources>
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -49,202 +31,265 @@
             <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
 
-        <!-- Header -->
-        <StackPanel Grid.Row="0" Margin="15,10,15,5">
-            <TextBlock Text="AllKeyShop Price Monitor" 
-                      FontSize="20" 
-                      FontWeight="Bold"
-                      Margin="0,0,0,5"/>
-            <TextBlock Text="Monitora i prezzi dei tuoi giochi e scopri i giochi gratis" 
-                      FontSize="12" 
-                      Opacity="0.7"/>
-        </StackPanel>
-
-        <!-- Toolbar -->
-        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,5,15,5">
-            <Button x:Name="AddGameButton" Content="&#xEFD9; Aggiungi Gioco" 
-                   Padding="12,6" Margin="0,0,5,0"
-                   Click="AddGameButton_Click"
-                   ToolTip="Aggiungi un gioco da monitorare"/>
-            <Button x:Name="RefreshButton" Content="&#xE72C; Aggiorna Prezzi" 
-                   Padding="12,6" Margin="0,0,5,0"
-                   Click="RefreshButton_Click"
-                   ToolTip="Aggiorna tutti i prezzi"/>
-            <Button x:Name="ShowFreeGamesButton" Content="&#xE734; Giochi Gratis" 
-                   Padding="12,6" Margin="0,0,5,0"
-                   Click="ShowFreeGamesButton_Click"
-                   ToolTip="Controlla giochi gratis"/>
-            <TextBlock x:Name="StatusText" 
-                      VerticalAlignment="Center" 
-                      Margin="10,0,0,0"
-                      Opacity="0.7"/>
-        </StackPanel>
-
-        <!-- Main content: Watched Games List -->
-        <DataGrid x:Name="GamesDataGrid" 
-                 Grid.Row="2" 
-                 Margin="15,5,15,5"
-                 AutoGenerateColumns="False"
-                 IsReadOnly="True"
-                 SelectionMode="Single"
-                 CanUserSortColumns="True"
-                 MouseDoubleClick="GamesDataGrid_MouseDoubleClick"
-                 GridLinesVisibility="Horizontal"
-                 HeadersVisibility="Column"
-                 BorderThickness="1"
-                 BorderBrush="#40808080"
-                 HorizontalGridLinesBrush="#18808080"
-                 RowHeight="36"
-                 Background="Transparent"
-                 ScrollViewer.HorizontalScrollBarVisibility="Auto">
-            <DataGrid.Columns>
-                <DataGridTextColumn Header="Gioco" 
-                                  Binding="{Binding GameName}" 
-                                  Width="*"
-                                  MinWidth="200"/>
-                <DataGridTextColumn Header="Prezzo Key" 
-                                  Binding="{Binding KeyPriceDisplay}" 
-                                  Width="110"/>
-                <DataGridTextColumn Header="Prezzo Account" 
-                                  Binding="{Binding AccountPriceDisplay}" 
-                                  Width="120"/>
-                <DataGridTextColumn Header="Migliore" 
-                                  Binding="{Binding BestPriceDisplay}" 
-                                  Width="100"/>
-                <DataGridTextColumn Header="Soglia" 
-                                  Binding="{Binding PriceThreshold, StringFormat={}{0:C}}" 
-                                  Width="80"/>
-                <DataGridTextColumn Header="Aggiornato" 
-                                  Binding="{Binding LastUpdate, StringFormat={}{0:g}}" 
-                                  Width="140"/>
-                <DataGridTemplateColumn Header="Azioni" Width="Auto" MinWidth="170">
-                    <DataGridTemplateColumn.CellTemplate>
-                        <DataTemplate>
-                            <StackPanel Orientation="Horizontal">
-                                <Button Content="Apri" 
-                                       Click="OpenUrlButton_Click"
-                                       Tag="{Binding}"
-                                       Padding="4,1" Margin="1,0" FontSize="11"
-                                       ToolTip="Apri la pagina AllKeyShop"/>
-                                <Button Content="Compra" 
-                                       Click="BuyButton_Click"
-                                       Tag="{Binding}"
-                                       Padding="4,1" Margin="1,0" FontSize="11"
-                                       ToolTip="Vai all'offerta migliore"/>
-                                <Button Content="Agg." 
-                                       Click="UpdateSingleButton_Click"
-                                       Tag="{Binding}"
-                                       Padding="4,1" Margin="1,0" FontSize="11"
-                                       ToolTip="Aggiorna prezzo"/>
-                                <Button Content="✏" 
-                                       Click="EditThresholdButton_Click"
-                                       Tag="{Binding}"
-                                       Padding="4,1" Margin="1,0" FontSize="11"
-                                       ToolTip="Modifica soglia prezzo"/>
-                                <Button Content="X" 
-                                       Click="RemoveButton_Click"
-                                       Tag="{Binding Id}"
-                                       Padding="4,1" Margin="1,0" FontSize="11"
-                                       ToolTip="Rimuovi dal monitoraggio"
-                                       Foreground="#FF6B68"/>
-                            </StackPanel>
-                        </DataTemplate>
-                    </DataGridTemplateColumn.CellTemplate>
-                </DataGridTemplateColumn>
-            </DataGrid.Columns>
-        </DataGrid>
-
-        <!-- Empty State -->
-        <StackPanel x:Name="EmptyStatePanel" 
-                   Grid.Row="2" 
-                   HorizontalAlignment="Center" 
-                   VerticalAlignment="Center"
-                   Visibility="Collapsed">
-            <TextBlock Text="Nessun gioco monitorato" 
-                      FontSize="16" 
-                      Opacity="0.5"
-                      HorizontalAlignment="Center"
-                      Margin="0,0,0,10"/>
-            <TextBlock Text="Clicca su 'Aggiungi Gioco' per iniziare a monitorare i prezzi su AllKeyShop" 
-                      FontSize="12" 
-                      Opacity="0.4"
-                      HorizontalAlignment="Center"
-                      TextWrapping="Wrap"
-                      MaxWidth="400"/>
-        </StackPanel>
-
-        <!-- Free Games Section -->
-        <Expander x:Name="FreeGamesExpander" 
-                 Grid.Row="3" 
-                 Header="Giochi Gratis Recenti" 
-                 Margin="15,5,15,5"
-                 Foreground="{DynamicResource TextBrush}"
-                 IsExpanded="False">
-            <Grid MaxHeight="200">
-                <DataGrid x:Name="FreeGamesDataGrid" 
-                         AutoGenerateColumns="False"
-                         IsReadOnly="True"
-                         GridLinesVisibility="Horizontal"
-                         HeadersVisibility="Column"
-                         RowHeight="30"
-                         Background="Transparent"
-                         BorderBrush="#40808080"
-                         HorizontalGridLinesBrush="#18808080">
-                    <DataGrid.Columns>
-                        <DataGridTextColumn Header="Gioco" 
-                                          Binding="{Binding GameName}" 
-                                          Width="*"/>
-                        <DataGridTextColumn Header="Tipo" 
-                                          Binding="{Binding Platform}" 
-                                          Width="140"/>
-                        <DataGridTextColumn Header="Trovato il" 
-                                          Binding="{Binding DateFound, StringFormat={}{0:d}}" 
-                                          Width="120"/>
-                        <DataGridTemplateColumn Header="" Width="60">
-                            <DataGridTemplateColumn.CellTemplate>
-                                <DataTemplate>
-                                    <Button Content="Apri" 
-                                           Click="OpenFreeGameUrl_Click"
-                                           Tag="{Binding}"
-                                           Padding="4,2"/>
-                                </DataTemplate>
-                            </DataGridTemplateColumn.CellTemplate>
-                        </DataGridTemplateColumn>
-                    </DataGrid.Columns>
-                </DataGrid>
-                <TextBlock x:Name="NoFreeGamesText"
-                          Text="Nessun gioco gratis trovato di recente"
-                          HorizontalAlignment="Center"
-                          VerticalAlignment="Center"
-                          Opacity="0.5"
-                          Visibility="Collapsed"/>
-            </Grid>
-        </Expander>
-
-        <!-- Loading Overlay -->
-        <Border x:Name="LoadingOverlay" 
-               Grid.Row="2" 
-               Background="#CC000000"
-               Visibility="Collapsed">
-            <StackPanel HorizontalAlignment="Center" 
-                       VerticalAlignment="Center">
-                <TextBlock Text="Caricamento..." 
-                          FontSize="14"
-                          Foreground="White"
-                          HorizontalAlignment="Center"
-                          Margin="0,0,0,10"/>
-                <ProgressBar IsIndeterminate="True" 
-                            Width="200" 
-                            Height="16"/>
+        <!-- HEADER -->
+        <Border Grid.Row="0" Padding="16,14,16,10"
+                Background="#0A808080"
+                BorderBrush="#18808080" BorderThickness="0,0,0,1">
+            <StackPanel>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xEF40;" FontFamily="Segoe MDL2 Assets"
+                               FontSize="22" VerticalAlignment="Center"
+                               Margin="0,0,10,0" Opacity="0.75"/>
+                    <TextBlock Text="AllKeyShop Price Monitor" 
+                               FontSize="20" FontWeight="Bold"/>
+                </StackPanel>
+                <TextBlock Text="Monitora i prezzi dei tuoi giochi e scopri i giochi gratis" 
+                           FontSize="11.5" Opacity="0.5" Margin="32,3,0,0"/>
             </StackPanel>
         </Border>
 
-        <!-- Status Bar -->
-        <Border Grid.Row="4" Padding="15,5" Opacity="0.6">
+        <!-- TOOLBAR -->
+        <Border Grid.Row="1" Padding="16,8" Background="#06808080">
+            <DockPanel>
+                <TextBlock x:Name="StatusText" DockPanel.Dock="Right"
+                           VerticalAlignment="Center" Opacity="0.55" FontSize="11.5"
+                           TextTrimming="CharacterEllipsis" MaxWidth="260"
+                           Margin="12,0,0,0"/>
+                <StackPanel Orientation="Horizontal">
+                    <Button Style="{StaticResource ToolbarBtn}" 
+                            Click="AddGameButton_Click" 
+                            ToolTip="Aggiungi un gioco da monitorare">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Aggiungi" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarBtn}" 
+                            Click="RefreshButton_Click" 
+                            ToolTip="Aggiorna tutti i prezzi">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Aggiorna" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Style="{StaticResource ToolbarBtn}" 
+                            Click="ShowFreeGamesButton_Click" 
+                            ToolTip="Controlla giochi gratis">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE8E6;" FontFamily="Segoe MDL2 Assets" 
+                                       FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                            <TextBlock Text="Gratis" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+
+        <!-- GAME LIST -->
+        <Grid Grid.Row="2">
+            <ScrollViewer x:Name="GamesScrollViewer"
+                          VerticalScrollBarVisibility="Auto" 
+                          HorizontalScrollBarVisibility="Disabled"
+                          Padding="0">
+                <ItemsControl x:Name="GamesItemsControl" Margin="12,8,12,4">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Background="#0C808080" CornerRadius="6"
+                                    Padding="12,10" Margin="0,0,0,6"
+                                    BorderBrush="#12808080" BorderThickness="1">
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <!-- Game Thumbnail -->
+                                    <Border Grid.Column="0" Width="64" Height="36"
+                                            CornerRadius="4" ClipToBounds="True"
+                                            Background="#15808080" VerticalAlignment="Center">
+                                        <Grid>
+                                            <TextBlock Text="&#xE7FC;" FontFamily="Segoe MDL2 Assets"
+                                                       FontSize="16" Opacity="0.25"
+                                                       HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                                            <Image Source="{Binding ImageUrl}" 
+                                                   Stretch="UniformToFill"
+                                                   RenderOptions.BitmapScalingMode="HighQuality"/>
+                                        </Grid>
+                                    </Border>
+
+                                    <!-- Game Info -->
+                                    <StackPanel Grid.Column="1" Margin="12,0,12,0" 
+                                                VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding GameName}" 
+                                                   FontSize="13.5" FontWeight="SemiBold"
+                                                   TextTrimming="CharacterEllipsis"/>
+                                        <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
+                                            <TextBlock Text="Key: " FontSize="11" Opacity="0.5"/>
+                                            <TextBlock Text="{Binding KeyPriceDisplay}" FontSize="11" Opacity="0.85"/>
+                                            <TextBlock Text="  &#x00B7;  " FontSize="11" Opacity="0.3"/>
+                                            <TextBlock Text="Account: " FontSize="11" Opacity="0.5"/>
+                                            <TextBlock Text="{Binding AccountPriceDisplay}" FontSize="11" Opacity="0.85"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
+                                            <TextBlock FontSize="10" Opacity="0.4">
+                                                <TextBlock.Text>
+                                                    <Binding Path="ThresholdDisplay" StringFormat="Soglia: {0}"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                            <TextBlock Text="  &#x00B7;  " FontSize="10" Opacity="0.25"/>
+                                            <TextBlock FontSize="10" Opacity="0.4">
+                                                <TextBlock.Text>
+                                                    <Binding Path="LastUpdate" StringFormat="Agg: {0:dd/MM/yy HH:mm}"/>
+                                                </TextBlock.Text>
+                                            </TextBlock>
+                                        </StackPanel>
+                                    </StackPanel>
+
+                                    <!-- Price + Actions -->
+                                    <StackPanel Grid.Column="2" VerticalAlignment="Center">
+                                        <TextBlock Text="{Binding BestPriceDisplay}" 
+                                                   FontSize="18" FontWeight="Bold"
+                                                   HorizontalAlignment="Right"
+                                                   Margin="0,0,0,6"/>
+                                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                            <Button Style="{StaticResource IconBtn}" 
+                                                    ToolTip="Apri pagina AllKeyShop"
+                                                    Click="OpenUrlButton_Click" Tag="{Binding}">
+                                                <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                                            </Button>
+                                            <Button Style="{StaticResource IconBtn}" 
+                                                    ToolTip="Vai all'offerta migliore"
+                                                    Click="BuyButton_Click" Tag="{Binding}">
+                                                <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                                            </Button>
+                                            <Button Style="{StaticResource IconBtn}" 
+                                                    ToolTip="Aggiorna prezzo"
+                                                    Click="UpdateSingleButton_Click" Tag="{Binding}">
+                                                <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                                            </Button>
+                                            <Button Style="{StaticResource IconBtn}" 
+                                                    ToolTip="Modifica soglia prezzo"
+                                                    Click="EditThresholdButton_Click" Tag="{Binding}">
+                                                <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
+                                            </Button>
+                                            <Button Style="{StaticResource IconBtn}" 
+                                                    ToolTip="Rimuovi dal monitoraggio"
+                                                    Click="RemoveButton_Click" Tag="{Binding Id}">
+                                                <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets"
+                                                           FontSize="12" Foreground="#FF6B68"/>
+                                            </Button>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </ScrollViewer>
+
+            <!-- Empty State -->
+            <StackPanel x:Name="EmptyStatePanel"
+                        HorizontalAlignment="Center"
+                        VerticalAlignment="Center"
+                        Visibility="Collapsed">
+                <TextBlock Text="&#xE7FC;" FontFamily="Segoe MDL2 Assets"
+                           FontSize="48" Opacity="0.15"
+                           HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                <TextBlock Text="Nessun gioco monitorato" 
+                           FontSize="16" Opacity="0.45"
+                           HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                <TextBlock Text="Clicca 'Aggiungi' per iniziare a monitorare i prezzi" 
+                           FontSize="12" Opacity="0.3"
+                           HorizontalAlignment="Center"
+                           TextWrapping="Wrap" MaxWidth="300"/>
+            </StackPanel>
+
+            <!-- Loading Overlay -->
+            <Border x:Name="LoadingOverlay" 
+                    Background="#CC000000"
+                    Visibility="Collapsed">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets"
+                               FontSize="28" Foreground="White" Opacity="0.7"
+                               HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                    <TextBlock Text="Caricamento..." 
+                               FontSize="14" Foreground="White"
+                               HorizontalAlignment="Center" Margin="0,0,0,10"/>
+                    <ProgressBar IsIndeterminate="True" Width="200" Height="3"
+                                 Background="#40FFFFFF" Foreground="#AAFFFFFF"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- FREE GAMES SECTION -->
+        <Expander x:Name="FreeGamesExpander" Grid.Row="3"
+                  Margin="12,4,12,4"
+                  Foreground="{DynamicResource TextBrush}"
+                  IsExpanded="False">
+            <Expander.Header>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="&#xE8E6;" FontFamily="Segoe MDL2 Assets" 
+                               FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.6"/>
+                    <TextBlock Text="Giochi Gratis Recenti" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock x:Name="FreeGamesCountText" FontSize="11" Opacity="0.4"
+                               VerticalAlignment="Center" Margin="8,0,0,0"/>
+                </StackPanel>
+            </Expander.Header>
+            <Grid MaxHeight="220">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <ItemsControl x:Name="FreeGamesItemsControl" Margin="4,4,4,4">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#08808080" CornerRadius="4" 
+                                        Padding="10,6" Margin="0,0,0,3">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                            <ColumnDefinition Width="Auto"/>
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock Grid.Column="0" Text="{Binding GameName}" 
+                                                   FontSize="12" TextTrimming="CharacterEllipsis"
+                                                   VerticalAlignment="Center"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding Platform}" 
+                                                   FontSize="10.5" Opacity="0.5"
+                                                   VerticalAlignment="Center" Margin="10,0"/>
+                                        <TextBlock Grid.Column="2" VerticalAlignment="Center"
+                                                   FontSize="10.5" Opacity="0.4" Margin="0,0,8,0">
+                                            <TextBlock.Text>
+                                                <Binding Path="DateFound" StringFormat="{}{0:dd/MM}"/>
+                                            </TextBlock.Text>
+                                        </TextBlock>
+                                        <Button Grid.Column="3" Style="{StaticResource IconBtn}"
+                                                ToolTip="Apri" Click="OpenFreeGameUrl_Click" Tag="{Binding}">
+                                            <TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="11"/>
+                                        </Button>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+                <TextBlock x:Name="NoFreeGamesText"
+                           Text="Nessun gioco gratis trovato di recente"
+                           HorizontalAlignment="Center"
+                           VerticalAlignment="Center"
+                           Opacity="0.35" FontSize="12"
+                           Visibility="Collapsed"/>
+            </Grid>
+        </Expander>
+
+        <!-- STATUS BAR -->
+        <Border Grid.Row="4" Padding="16,6" Opacity="0.5"
+                BorderBrush="#15808080" BorderThickness="0,1,0,0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="GameCountText" Text="0 giochi monitorati"/>
-                <TextBlock Text=" | " Margin="5,0"/>
-                <TextBlock x:Name="LastUpdateText" Text="Ultimo aggiornamento: mai"/>
+                <TextBlock x:Name="GameCountText" Text="0 giochi monitorati" FontSize="11"/>
+                <TextBlock Text="  &#x00B7;  " FontSize="11" Opacity="0.5"/>
+                <TextBlock x:Name="LastUpdateText" Text="Ultimo aggiornamento: mai" FontSize="11"/>
             </StackPanel>
         </Border>
     </Grid>

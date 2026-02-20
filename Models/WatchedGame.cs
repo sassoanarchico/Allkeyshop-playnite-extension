@@ -22,6 +22,9 @@ namespace AllKeyShopExtension.Models
         // AllKeyShop page URL (for "Apri" button)
         public string AllKeyShopPageUrl { get; set; }
 
+        // Game thumbnail URL (from search results)
+        public string ImageUrl { get; set; }
+
         // Display helpers
         public string KeyPriceDisplay => KeyPrice.HasValue ? $"{KeyPrice.Value:0.00}€ ({KeySeller})" : "N/A";
         public string AccountPriceDisplay => AccountPrice.HasValue ? $"{AccountPrice.Value:0.00}€ ({AccountSeller})" : "N/A";
@@ -33,6 +36,8 @@ namespace AllKeyShopExtension.Models
                 return "N/A";
             }
         }
+
+        public string ThresholdDisplay => PriceThreshold.HasValue ? $"{PriceThreshold.Value:0.00}\u20ac" : "\u2014";
 
         public WatchedGame()
         {

@@ -43,8 +43,8 @@ namespace AllKeyShopExtension.Views
 
             watchedGames = new ObservableCollection<WatchedGame>();
             freeGames = new ObservableCollection<FreeGame>();
-            GamesDataGrid.ItemsSource = watchedGames;
-            FreeGamesDataGrid.ItemsSource = freeGames;
+            GamesItemsControl.ItemsSource = watchedGames;
+            FreeGamesItemsControl.ItemsSource = freeGames;
 
             LoadGames();
             LoadFreeGames();
@@ -64,7 +64,7 @@ namespace AllKeyShopExtension.Views
                 EmptyStatePanel.Visibility = watchedGames.Count == 0
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-                GamesDataGrid.Visibility = watchedGames.Count == 0
+                GamesScrollViewer.Visibility = watchedGames.Count == 0
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
@@ -97,9 +97,10 @@ namespace AllKeyShopExtension.Views
                 NoFreeGamesText.Visibility = freeGames.Count == 0
                     ? Visibility.Visible
                     : Visibility.Collapsed;
-                FreeGamesDataGrid.Visibility = freeGames.Count == 0
+                FreeGamesItemsControl.Visibility = freeGames.Count == 0
                     ? Visibility.Collapsed
                     : Visibility.Visible;
+                FreeGamesCountText.Text = freeGames.Count > 0 ? $"({freeGames.Count})" : "";
             }
             catch (Exception ex)
             {
@@ -121,8 +122,9 @@ namespace AllKeyShopExtension.Views
                     var gameName = selected.Title;
                     var pageUrl = selected.Url;
                     var threshold = searchWindow.PriceThreshold;
+                    var imageUrl = selected.ImageUrl;
 
-                    await AddGameAsync(gameName, pageUrl, threshold);
+                    await AddGameAsync(gameName, pageUrl, threshold, imageUrl);
                 }
             }
             catch (Exception ex)
@@ -132,14 +134,14 @@ namespace AllKeyShopExtension.Views
             }
         }
 
-        private async Task AddGameAsync(string gameName, string pageUrl, decimal? threshold)
+        private async Task AddGameAsync(string gameName, string pageUrl, decimal? threshold, string imageUrl = null)
         {
             try
             {
                 ShowLoading(true);
                 StatusText.Text = $"Aggiunta di '{gameName}'...";
 
-                var added = priceService.AddWatchedGame(gameName, pageUrl, threshold);
+                var added = priceService.AddWatchedGame(gameName, pageUrl, threshold, imageUrl);
                 if (added)
                 {
                     LoadGames();
@@ -429,29 +431,6 @@ namespace AllKeyShopExtension.Views
             catch (Exception ex)
             {
                 logger.Error(ex, "Error removing game");
-            }
-        }
-
-        private void GamesDataGrid_MouseDoubleClick(object sender, System.Windows.Input.MouseButtonEventArgs e)
-        {
-            try
-            {
-                if (GamesDataGrid.SelectedItem is WatchedGame game)
-                {
-                    var url = game.AllKeyShopPageUrl ?? game.LastUrl;
-                    if (!string.IsNullOrEmpty(url))
-                    {
-                        Process.Start(new ProcessStartInfo
-                        {
-                            FileName = url,
-                            UseShellExecute = true
-                        });
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, "Error opening game URL on double click");
             }
         }
 

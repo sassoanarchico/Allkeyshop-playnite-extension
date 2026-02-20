@@ -80,18 +80,10 @@ namespace AllKeyShopExtension
                         await Task.Delay(2000); // Wait 2 seconds without blocking thread pool
                         try
                         {
-                            // Use Dispatcher.CurrentDispatcher or check if application is still running
                             var dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
                             if (dispatcher != null && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
                             {
-                                dispatcher.Invoke(() =>
-                                {
-                                    // Double-check that plugin hasn't been disposed
-                                    if (priceUpdateTimer != null || freeGamesCheckTimer != null)
-                                    {
-                                        StartTimers();
-                                    }
-                                });
+                                dispatcher.Invoke(() => StartTimers());
                             }
                         }
                         catch (Exception ex)

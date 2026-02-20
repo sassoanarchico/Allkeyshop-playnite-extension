@@ -5,6 +5,26 @@ Tutte le modifiche notevoli a questo progetto saranno documentate in questo file
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.0.0/),
 e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
+## [1.0.0] - 2026-02-20
+
+### Aggiunto
+- **Icone gioco nella lista monitorati**: Ogni gioco aggiunto mostra la thumbnail dalla ricerca AllKeyShop. Placeholder con icona controller per giochi senza immagine.
+- **Proprietà `ThresholdDisplay`**: Mostra la soglia formattata (es. "15.00\u20ac") o "\u2014" se non impostata.
+- **Conteggio giochi gratis**: L'expander mostra il numero di giochi gratis trovati.
+
+### Corretto
+- **Icone pulsanti rotte**: Tutti i pulsanti toolbar e azioni ora usano `FontFamily="Segoe MDL2 Assets"` esplicito per le icone. Risolto il problema dei quadrati vuoti al posto delle icone.
+- **Timer non si avviava mai**: Rimossa condizione guard errata in Plugin.cs che impediva l'avvio dei timer di aggiornamento automatico.
+- **Database**: Aggiunta colonna `ImageUrl` con migrazione automatica.
+
+### Modificato
+- **UI professionale completa**: Riscrittura completa della sidebar con layout a schede (card-based). Ogni gioco \u00e8 visualizzato come una card con thumbnail, nome, prezzi key/account, soglia, data aggiornamento e pulsanti azione con icone MDL2.
+- **Toolbar moderna**: Pulsanti con icone Segoe MDL2 Assets + testo, layout DockPanel con status text.
+- **Sezione giochi gratis**: Convertita da DataGrid a ItemsControl con card compatte.
+- **Stato vuoto migliorato**: Icona controller grande + testo invitante.
+- **Loading overlay**: Icona sync + barra progresso sottile.
+- **Status bar pulita**: Separatore con middle dot, font ridotto.
+
 ## [0.2.4] - 2025-07-24
 
 ### Aggiunto

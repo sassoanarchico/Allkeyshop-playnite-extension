@@ -1,30 +1,16 @@
-# Build results
-[Dd]ebug/
-[Dd]ebugPublic/
-[Rr]elease/
-[Rr]eleases/
-x64/
-x86/
-[Ww][Ii][Nn]32/
-[Aa][Rr][Mm]/
-[Aa][Rr][Mm]64/
-bld/
+## --- Build output ---
 [Bb]in/
 [Oo]bj/
-[Ll]og/
-[Ll]ogs/
+[Rr]elease/
+[Rr]eleases/
+[Dd]ebug/
+x64/
+x86/
 
-# Visual Studio cache/options
-.vs/
-*.suo
-*.user
-*.userosscache
-*.sln.docstates
-
-# Build artifacts
+## --- Build artifacts ---
 *.dll
-*.exe
 *.pdb
+*.exe
 *.cache
 *.baml
 *.g.cs
@@ -32,47 +18,50 @@ bld/
 *.Up2Date
 *.FileListAbsolute.txt
 *.GeneratedMSBuildEditorConfig.editorconfig
+
+## --- NuGet ---
+*.nupkg
+*.snupkg
+packages/
+project.assets.json
+project.nuget.cache
 *.csproj.nuget.dgspec.json
 *.csproj.nuget.g.props
 *.csproj.nuget.g.targets
-project.assets.json
-project.nuget.cache
 
-# Extension package
+## --- Extension package ---
 *.pext
-
-# Temporary files
 temp_pext_*/
-*.tmp
-*.temp
 
-# NuGet packages
-packages/
-*.nupkg
-*.snupkg
-
-# Markdown files (except README and CHANGELOG)
-*.md
-!README.md
-!CHANGELOG.md
-
-# PowerShell scripts
+## --- Scripts ---
 *.ps1
-
-# Batch scripts
 *.bat
 
-# OS files
-.DS_Store
-Thumbs.db
-desktop.ini
+## --- Legacy docs ---
+BUILD.md
+COMPILE_INSTRUCTIONS.md
+PATH_INFO.md
+ANALISI_PROBLEMI_ESTENSIONI.md
 
-# IDE files
+## --- Visual Studio / IDE ---
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 .idea/
 *.swp
 *.swo
 *~
 
-*.bat
-*.ps1
-CHANGELOG.md
+## --- OS files ---
+.DS_Store
+Thumbs.db
+[Dd]esktop.ini
+
+## --- Temporary ---
+*.tmp
+*.temp
+*.log
+*.db
+*.db
