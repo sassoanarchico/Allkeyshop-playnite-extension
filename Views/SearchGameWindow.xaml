@@ -57,6 +57,23 @@
                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
                  Background="{DynamicResource ControlBackgroundBrush}"
                  Foreground="{DynamicResource TextBrush}">
+            <ListBox.ItemContainerStyle>
+                <Style TargetType="ListBoxItem">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Setter Property="Background" Value="Transparent"/>
+                    <Setter Property="Padding" Value="2"/>
+                    <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                    <Style.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="#18808080"/>
+                        </Trigger>
+                        <Trigger Property="IsSelected" Value="True">
+                            <Setter Property="Background" Value="#28808080"/>
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                        </Trigger>
+                    </Style.Triggers>
+                </Style>
+            </ListBox.ItemContainerStyle>
             <ListBox.ItemTemplate>
                 <DataTemplate>
                     <Grid Margin="4,6">
@@ -137,11 +154,12 @@
         <!-- Loading Overlay -->
         <Border x:Name="LoadingOverlay" 
                 Grid.Row="2"
-                Background="#88000000"
+                Background="#CC000000"
                 Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                 <TextBlock Text="Ricerca in corso..." 
                           FontSize="14"
+                          Foreground="White"
                           HorizontalAlignment="Center" Margin="0,0,0,10"/>
                 <ProgressBar IsIndeterminate="True" Width="200" Height="14"/>
             </StackPanel>

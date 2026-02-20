@@ -16,7 +16,7 @@ namespace AllKeyShopExtension.Models
             PriceUpdateIntervalMinutes = 60; // Default 1 hour
             FreeGamesCheckIntervalMinutes = 120; // Default 2 hours
             NotificationsEnabled = true;
-            PriceAlertsEnabled = false;
+            PriceAlertsEnabled = true;
         }
 
         public bool IsPlatformEnabled(string platform)

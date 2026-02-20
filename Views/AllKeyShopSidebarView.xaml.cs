@@ -21,6 +21,7 @@ namespace AllKeyShopExtension.Views
         private readonly FreeGamesService freeGamesService;
         private readonly Database database;
         private readonly Models.ExtensionSettings settings;
+        private readonly NotificationService notificationService;
         private ObservableCollection<WatchedGame> watchedGames;
         private ObservableCollection<FreeGame> freeGames;
 
@@ -37,6 +38,7 @@ namespace AllKeyShopExtension.Views
             this.freeGamesService = freeGamesService;
             this.database = database;
             this.settings = settings;
+            this.notificationService = new NotificationService(api, settings);
 
             watchedGames = new ObservableCollection<WatchedGame>();
             freeGames = new ObservableCollection<FreeGame>();
@@ -182,6 +184,9 @@ namespace AllKeyShopExtension.Views
                 await priceService.UpdateAllPrices();
                 LoadGames();
 
+                // Check for price alerts
+                CheckAndNotifyPriceAlerts();
+
                 StatusText.Text = "Prezzi aggiornati!";
             }
             catch (Exception ex)
@@ -277,6 +282,14 @@ namespace AllKeyShopExtension.Views
                     StatusText.Text = $"Aggiornamento '{game.GameName}'...";
                     await priceService.UpdateGamePrice(game);
                     LoadGames();
+
+                    // Check alert for this specific game
+                    var updatedGame = priceService.GetWatchedGame(game.Id);
+                    if (updatedGame != null && priceService.CheckPriceAlert(updatedGame))
+                    {
+                        notificationService.NotifyPriceAlert(updatedGame);
+                    }
+
                     StatusText.Text = $"'{game.GameName}' aggiornato!";
                 }
             }
@@ -359,6 +372,28 @@ namespace AllKeyShopExtension.Views
         private void ShowLoading(bool show)
         {
             LoadingOverlay.Visibility = show ? Visibility.Visible : Visibility.Collapsed;
+        }
+
+        private void CheckAndNotifyPriceAlerts()
+        {
+            try
+            {
+                var alertGames = priceService.GetGamesWithPriceAlerts();
+                foreach (var game in alertGames)
+                {
+                    notificationService.NotifyPriceAlert(game);
+                }
+
+                if (alertGames.Count > 0)
+                {
+                    StatusText.Text = $"Prezzi aggiornati! {alertGames.Count} alert prezzo!";
+                    logger.Info($"Price alerts triggered for {alertGames.Count} game(s) from sidebar");
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error checking price alerts from sidebar");
+            }
         }
     }
 }

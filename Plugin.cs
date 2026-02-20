@@ -332,6 +332,25 @@ namespace AllKeyShopExtension
             try
             {
                 await priceService.UpdateAllPrices();
+
+                // Check for price alerts after updating
+                try
+                {
+                    var alertGames = priceService.GetGamesWithPriceAlerts();
+                    foreach (var game in alertGames)
+                    {
+                        notificationService?.NotifyPriceAlert(game);
+                    }
+
+                    if (alertGames.Count > 0)
+                    {
+                        logger.Info($"Price alerts triggered for {alertGames.Count} game(s)");
+                    }
+                }
+                catch (Exception alertEx)
+                {
+                    logger.Error(alertEx, "Error checking price alerts");
+                }
             }
             catch (Exception ex)
             {

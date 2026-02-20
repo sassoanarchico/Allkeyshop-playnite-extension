@@ -37,16 +37,17 @@ namespace AllKeyShopExtension.Services
                     var platform = platformGroup.Key;
                     var games = platformGroup.ToList();
 
-                    var title = $"Nuovi giochi gratis su {platform}!";
                     var message = BuildFreeGamesMessage(games);
+                    var text = $"🎮 Nuovi giochi gratis su {platform}!\n{message}";
+
+                    logger.Info($"Sending free games notification: {text}");
 
                     playniteAPI.Notifications.Add(new NotificationMessage(
-                        Guid.NewGuid().ToString(),
-                        title,
+                        $"allkeyshop-free-{platform}",
+                        text,
                         NotificationType.Info,
                         () =>
                         {
-                            // Open AllKeyShop when notification is clicked
                             if (games.Count > 0 && !string.IsNullOrEmpty(games[0].Url))
                             {
                                 System.Diagnostics.Process.Start(games[0].Url);
@@ -61,36 +62,68 @@ namespace AllKeyShopExtension.Services
             }
         }
 
+        /// <summary>
+        /// Sends a Playnite notification when a game's price drops below the configured threshold.
+        /// Uses a stable notification ID per game to avoid duplicate alerts.
+        /// </summary>
         public void NotifyPriceAlert(WatchedGame game)
         {
             if (!settings.NotificationsEnabled || !settings.PriceAlertsEnabled)
             {
+                logger.Debug($"Price alert skipped for {game.GameName}: Notifications={settings.NotificationsEnabled}, PriceAlerts={settings.PriceAlertsEnabled}");
                 return;
             }
 
             try
             {
-                var title = $"Alert Prezzo: {game.GameName}";
-                var message = $"Il prezzo è sceso a {game.LastPrice:C}! " +
-                             $"Soglia impostata: {game.PriceThreshold:C}";
+                // Determine best current price
+                decimal? bestPrice = null;
+                string bestSeller = null;
+                if (game.KeyPrice.HasValue && game.AccountPrice.HasValue)
+                {
+                    if (game.KeyPrice.Value <= game.AccountPrice.Value)
+                    { bestPrice = game.KeyPrice; bestSeller = game.KeySeller; }
+                    else
+                    { bestPrice = game.AccountPrice; bestSeller = game.AccountSeller; }
+                }
+                else if (game.KeyPrice.HasValue)
+                { bestPrice = game.KeyPrice; bestSeller = game.KeySeller; }
+                else if (game.AccountPrice.HasValue)
+                { bestPrice = game.AccountPrice; bestSeller = game.AccountSeller; }
+                else if (game.LastPrice.HasValue)
+                { bestPrice = game.LastPrice; bestSeller = game.LastSeller; }
+
+                if (!bestPrice.HasValue) return;
+
+                var text = $"💰 {game.GameName} - Prezzo sceso a {bestPrice.Value:0.00}€" +
+                           (bestSeller != null ? $" ({bestSeller})" : "") +
+                           $" | Soglia: {game.PriceThreshold.Value:0.00}€";
+
+                // Use stable ID per game to avoid duplicate notifications
+                var notificationId = $"allkeyshop-price-alert-{game.Id}";
+
+                logger.Info($"Sending price alert: {text}");
+
+                var url = !string.IsNullOrEmpty(game.LastUrl) ? game.LastUrl
+                        : !string.IsNullOrEmpty(game.AllKeyShopPageUrl) ? game.AllKeyShopPageUrl
+                        : null;
 
                 playniteAPI.Notifications.Add(new NotificationMessage(
-                    Guid.NewGuid().ToString(),
-                    title,
+                    notificationId,
+                    text,
                     NotificationType.Info,
                     () =>
                     {
-                        // Open AllKeyShop when notification is clicked
-                        if (!string.IsNullOrEmpty(game.LastUrl))
+                        if (!string.IsNullOrEmpty(url))
                         {
-                            System.Diagnostics.Process.Start(game.LastUrl);
+                            System.Diagnostics.Process.Start(url);
                         }
                     }
                 ));
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error showing price alert notification: {ex.Message}");
+                logger.Error(ex, $"Error showing price alert notification for {game.GameName}: {ex.Message}");
             }
         }
 
@@ -105,15 +138,15 @@ namespace AllKeyShopExtension.Services
             {
                 var priceChange = game.LastPrice.Value - oldPrice;
                 var direction = priceChange > 0 ? "aumentato" : "diminuito";
-                var changeText = Math.Abs(priceChange).ToString("C");
+                var changeText = Math.Abs(priceChange).ToString("0.00") + "€";
 
-                var title = $"Prezzo aggiornato: {game.GameName}";
-                var message = $"Il prezzo è {direction} di {changeText}. " +
-                             $"Nuovo prezzo: {game.LastPrice:C}";
+                var text = $"📊 {game.GameName}: prezzo {direction} di {changeText}. Nuovo prezzo: {game.LastPrice.Value:0.00}€";
+
+                logger.Info($"Sending price update notification: {text}");
 
                 playniteAPI.Notifications.Add(new NotificationMessage(
-                    Guid.NewGuid().ToString(),
-                    title,
+                    $"allkeyshop-price-update-{game.Id}",
+                    text,
                     NotificationType.Info,
                     () =>
                     {

@@ -72,3 +72,7 @@ desktop.ini
 *.swp
 *.swo
 *~
+
+*.bat
+*.ps1
+CHANGELOG.md

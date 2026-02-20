@@ -5,6 +5,35 @@ Tutte le modifiche notevoli a questo progetto saranno documentate in questo file
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.0.0/),
 e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
+## [0.2.3] - 2025-02-20
+
+### Corretto
+- **Notifiche prezzo non funzionanti**: Le notifiche di alert prezzo ora vengono inviate correttamente quando il prezzo scende sotto la soglia configurata.
+  - Il metodo `UpdatePrices()` nel plugin ora chiama `CheckPriceAlert()` dopo ogni aggiornamento prezzi e invia automaticamente le notifiche.
+  - `PriceAlertsEnabled` ora è abilitato di default (`true` invece di `false`).
+  - `NotifyPriceAlert()` riscritta: include il prezzo corrente, il venditore e la soglia nel testo della notifica (es. "💰 Cyberpunk 2077 - Prezzo sceso a 8.41€ (K4G) | Soglia: 10.00€").
+  - Usa ID stabili per notifica (`allkeyshop-price-alert-{id}`) per evitare duplicati.
+  - Click sulla notifica apre la pagina di acquisto.
+- **Notifiche giochi gratis**: Il messaggio include ora la lista completa dei giochi trovati.
+- **Notifiche aggiornamento prezzo**: Formato prezzo corretto (€ invece di `ToString("C")` che poteva usare altre valute).
+
+### Aggiunto
+- Alert prezzo anche dalla sidebar: il pulsante "Aggiorna Prezzi" e "Agg." (aggiorna singolo) ora verificano le soglie e inviano notifiche istantanee.
+- Logging dettagliato per ogni notifica inviata (`logger.Info`).
+
+## [0.2.2] - 2025-02-20
+
+### Corretto
+- **Tema e colori**: Riscrittura completa del sistema di stili per compatibilità ottimale con tutti i temi Playnite (scuro e chiaro).
+  - Rimossi tutti i background espliciti dai DataGrid (`ControlBackgroundBrush`, `WindowBackgroundBrush`) che causavano conflitti con i temi. Ora usano `Background="Transparent"` per ereditare correttamente dallo sfondo del tema.
+  - Aggiunti stili impliciti in `UserControl.Resources` per `DataGridRow`, `DataGridCell` e `DataGridColumnHeader` con trigger per hover e selezione che mantengono `TextBrush` come colore del testo in ogni stato.
+  - Usati overlay semi-trasparenti neutri (`#18808080`, `#28808080`) per hover e selezione che funzionano sia su sfondo scuro che chiaro.
+  - Aggiunto `Foreground="{DynamicResource TextBrush}"` sull'Expander per il testo dell'header.
+  - Aggiunti `ListBoxItem` styles con trigger nella finestra di ricerca per mantenere i colori corretti durante la selezione.
+  - Loading overlay ora con sfondo solido (`#CC000000`) e testo bianco esplicito, visibile su qualsiasi tema.
+- **Pulsante elimina non visibile**: La colonna Azioni ora usa `Width="Auto"` con `MinWidth="140"` e pulsanti compatti (`FontSize="11"`, `Padding="4,1"`). Aggiunto `ScrollViewer.HorizontalScrollBarVisibility="Auto"` al DataGrid per consentire lo scorrimento orizzontale. Rinominato "Aggiorna" in "Agg." per risparmiare spazio. Pulsante "X" evidenziato in rosso (`#FF6B68`).
+- **Giochi gratis (widget)**: Lo scraping dei giochi gratis ora usa il widget ufficiale AllKeyShop (`widget.allkeyshop.com`) invece della pagina blog `daily-game-deals`, recuperando correttamente tutti i giochi gratis disponibili (28+ titoli vs 6 articoli). Ogni gioco mostra piattaforma e tipo (es. "Steam - Free to keep", "Amazon - Free with Prime", "Xbox - Gamepass").
+
 ## [0.2.1] - 2025-07-10
 
 ### Corretto
