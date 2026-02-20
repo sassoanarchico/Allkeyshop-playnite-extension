@@ -101,8 +101,8 @@ namespace AllKeyShopExtension.Services
         }
 
         /// <summary>
-        /// Sends a Playnite notification when a game's price drops below the configured threshold.
-        /// Uses a stable notification ID per game to avoid duplicate alerts.
+        /// Sends Playnite + Windows toast notifications when a game's key or account price
+        /// drops below its respective threshold. Fires independently for each type.
         /// </summary>
         public void NotifyPriceAlert(WatchedGame game)
         {
@@ -114,59 +114,55 @@ namespace AllKeyShopExtension.Services
 
             try
             {
-                // Determine best current price
-                decimal? bestPrice = null;
-                string bestSeller = null;
-                if (game.KeyPrice.HasValue && game.AccountPrice.HasValue)
-                {
-                    if (game.KeyPrice.Value <= game.AccountPrice.Value)
-                    { bestPrice = game.KeyPrice; bestSeller = game.KeySeller; }
-                    else
-                    { bestPrice = game.AccountPrice; bestSeller = game.AccountSeller; }
-                }
-                else if (game.KeyPrice.HasValue)
-                { bestPrice = game.KeyPrice; bestSeller = game.KeySeller; }
-                else if (game.AccountPrice.HasValue)
-                { bestPrice = game.AccountPrice; bestSeller = game.AccountSeller; }
-                else if (game.LastPrice.HasValue)
-                { bestPrice = game.LastPrice; bestSeller = game.LastSeller; }
-
-                if (!bestPrice.HasValue) return;
-
-                var text = $"💰 {game.GameName} - Price dropped to {bestPrice.Value:0.00}€" +
-                           (bestSeller != null ? $" ({bestSeller})" : "") +
-                           $" | Threshold: {game.PriceThreshold.Value:0.00}€";
-                var sellerText = bestSeller != null ? $" ({bestSeller})" : "";
-
-                // Use stable ID per game to avoid duplicate notifications
-                var notificationId = $"allkeyshop-price-alert-{game.Id}";
-
-                logger.Info($"Sending price alert: {text}");
-
                 var url = !string.IsNullOrEmpty(game.LastUrl) ? game.LastUrl
                         : !string.IsNullOrEmpty(game.AllKeyShopPageUrl) ? game.AllKeyShopPageUrl
                         : null;
 
-                // Playnite notification
-                playniteAPI.Notifications.Add(new NotificationMessage(
-                    notificationId,
-                    text,
-                    NotificationType.Info,
-                    () =>
-                    {
-                        if (!string.IsNullOrEmpty(url))
-                        {
-                            System.Diagnostics.Process.Start(url);
-                        }
-                    }
-                ));
+                // Key price alert
+                if (game.KeyPriceThreshold.HasValue && game.KeyPrice.HasValue
+                    && game.KeyPrice.Value <= game.KeyPriceThreshold.Value)
+                {
+                    var sellerText = !string.IsNullOrEmpty(game.KeySeller) ? $" ({game.KeySeller})" : "";
+                    var text = $"🔑 {game.GameName} - Key price dropped to {game.KeyPrice.Value:0.00}€{sellerText}" +
+                               $" | Threshold: {game.KeyPriceThreshold.Value:0.00}€";
+                    var notificationId = $"allkeyshop-key-price-alert-{game.Id}";
 
-                // Windows toast notification
-                SendWindowsToast(
-                    $"Price Alert: {game.GameName}",
-                    $"Price: {bestPrice.Value:0.00}€{sellerText} (Threshold: {game.PriceThreshold.Value:0.00}€)",
-                    url
-                );
+                    logger.Info($"Sending key price alert: {text}");
+
+                    playniteAPI.Notifications.Add(new NotificationMessage(
+                        notificationId, text, NotificationType.Info,
+                        () => { if (!string.IsNullOrEmpty(url)) System.Diagnostics.Process.Start(url); }
+                    ));
+
+                    SendWindowsToast(
+                        $"Key Price Alert: {game.GameName}",
+                        $"Key: {game.KeyPrice.Value:0.00}€{sellerText} (Threshold: {game.KeyPriceThreshold.Value:0.00}€)",
+                        url
+                    );
+                }
+
+                // Account price alert
+                if (game.AccountPriceThreshold.HasValue && game.AccountPrice.HasValue
+                    && game.AccountPrice.Value <= game.AccountPriceThreshold.Value)
+                {
+                    var sellerText = !string.IsNullOrEmpty(game.AccountSeller) ? $" ({game.AccountSeller})" : "";
+                    var text = $"👤 {game.GameName} - Account price dropped to {game.AccountPrice.Value:0.00}€{sellerText}" +
+                               $" | Threshold: {game.AccountPriceThreshold.Value:0.00}€";
+                    var notificationId = $"allkeyshop-account-price-alert-{game.Id}";
+
+                    logger.Info($"Sending account price alert: {text}");
+
+                    playniteAPI.Notifications.Add(new NotificationMessage(
+                        notificationId, text, NotificationType.Info,
+                        () => { if (!string.IsNullOrEmpty(url)) System.Diagnostics.Process.Start(url); }
+                    ));
+
+                    SendWindowsToast(
+                        $"Account Price Alert: {game.GameName}",
+                        $"Account: {game.AccountPrice.Value:0.00}€{sellerText} (Threshold: {game.AccountPriceThreshold.Value:0.00}€)",
+                        url
+                    );
+                }
             }
             catch (Exception ex)
             {

@@ -43,7 +43,7 @@ namespace AllKeyShopExtension.Services
         /// <summary>
         /// Add a watched game with a specific AllKeyShop page URL (from search results).
         /// </summary>
-        public bool AddWatchedGame(string gameName, string allKeyShopPageUrl, decimal? priceThreshold = null, string imageUrl = null)
+        public bool AddWatchedGame(string gameName, string allKeyShopPageUrl, decimal? keyPriceThreshold = null, decimal? accountPriceThreshold = null, string imageUrl = null)
         {
             if (string.IsNullOrWhiteSpace(gameName))
                 return false;
@@ -56,7 +56,8 @@ namespace AllKeyShopExtension.Services
             {
                 GameName = gameName,
                 AllKeyShopPageUrl = allKeyShopPageUrl,
-                PriceThreshold = priceThreshold,
+                KeyPriceThreshold = keyPriceThreshold,
+                AccountPriceThreshold = accountPriceThreshold,
                 ImageUrl = imageUrl,
                 DateAdded = DateTime.Now
             };
@@ -68,9 +69,9 @@ namespace AllKeyShopExtension.Services
         /// <summary>
         /// Add a watched game by name only (legacy/backward compat).
         /// </summary>
-        public bool AddWatchedGame(string gameName, decimal? priceThreshold = null)
+        public bool AddWatchedGame(string gameName, decimal? keyPriceThreshold = null)
         {
-            return AddWatchedGame(gameName, null, priceThreshold);
+            return AddWatchedGame(gameName, null, keyPriceThreshold);
         }
 
         public void RemoveWatchedGame(int id)
@@ -78,14 +79,15 @@ namespace AllKeyShopExtension.Services
             database.DeleteWatchedGame(id);
         }
 
-        public void UpdateThreshold(int gameId, decimal? newThreshold)
+        public void UpdateThresholds(int gameId, decimal? keyThreshold, decimal? accountThreshold)
         {
             var game = database.GetWatchedGame(gameId);
             if (game != null)
             {
-                game.PriceThreshold = newThreshold;
+                game.KeyPriceThreshold = keyThreshold;
+                game.AccountPriceThreshold = accountThreshold;
                 database.UpdateWatchedGame(game);
-                logger.Info($"Updated threshold for '{game.GameName}' to {newThreshold}");
+                logger.Info($"Updated thresholds for '{game.GameName}': Key={keyThreshold}, Account={accountThreshold}");
             }
         }
 
@@ -188,21 +190,23 @@ namespace AllKeyShopExtension.Services
 
         public bool CheckPriceAlert(WatchedGame game)
         {
-            if (game.PriceThreshold.HasValue)
-            {
-                // Check against best price (key or account)
-                decimal? bestPrice = null;
-                if (game.KeyPrice.HasValue && game.AccountPrice.HasValue)
-                    bestPrice = Math.Min(game.KeyPrice.Value, game.AccountPrice.Value);
-                else if (game.KeyPrice.HasValue)
-                    bestPrice = game.KeyPrice;
-                else if (game.AccountPrice.HasValue)
-                    bestPrice = game.AccountPrice;
-                else if (game.LastPrice.HasValue)
-                    bestPrice = game.LastPrice;
+            return CheckKeyPriceAlert(game) || CheckAccountPriceAlert(game);
+        }
 
-                if (bestPrice.HasValue)
-                    return bestPrice.Value <= game.PriceThreshold.Value;
+        public bool CheckKeyPriceAlert(WatchedGame game)
+        {
+            if (game.KeyPriceThreshold.HasValue && game.KeyPrice.HasValue)
+            {
+                return game.KeyPrice.Value <= game.KeyPriceThreshold.Value;
+            }
+            return false;
+        }
+
+        public bool CheckAccountPriceAlert(WatchedGame game)
+        {
+            if (game.AccountPriceThreshold.HasValue && game.AccountPrice.HasValue)
+            {
+                return game.AccountPrice.Value <= game.AccountPriceThreshold.Value;
             }
             return false;
         }

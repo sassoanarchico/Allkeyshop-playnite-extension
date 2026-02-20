@@ -40,9 +40,14 @@ namespace AllKeyShopExtension.Views
         public SearchResult SelectedResult { get; private set; }
 
         /// <summary>
-        /// Optional price threshold set by the user.
+        /// Optional key price threshold set by the user.
         /// </summary>
-        public decimal? PriceThreshold { get; private set; }
+        public decimal? KeyPriceThreshold { get; private set; }
+
+        /// <summary>
+        /// Optional account price threshold set by the user.
+        /// </summary>
+        public decimal? AccountPriceThreshold { get; private set; }
 
         public SearchGameWindow(AllKeyShopScraper scraper, string initialSearch = null)
         {
@@ -142,11 +147,18 @@ namespace AllKeyShopExtension.Views
             {
                 SelectedResult = result;
 
-                // Parse threshold
-                var thresholdText = ThresholdTextBox.Text.Trim().Replace(",", ".");
-                if (decimal.TryParse(thresholdText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal t) && t > 0)
+                // Parse key threshold
+                var keyText = KeyThresholdTextBox.Text.Trim().Replace(",", ".");
+                if (decimal.TryParse(keyText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal k) && k > 0)
                 {
-                    PriceThreshold = t;
+                    KeyPriceThreshold = k;
+                }
+
+                // Parse account threshold
+                var accText = AccountThresholdTextBox.Text.Trim().Replace(",", ".");
+                if (decimal.TryParse(accText, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal a) && a > 0)
+                {
+                    AccountPriceThreshold = a;
                 }
 
                 DialogResult = true;

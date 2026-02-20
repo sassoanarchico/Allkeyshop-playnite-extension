@@ -121,10 +121,11 @@ namespace AllKeyShopExtension.Views
                     var selected = searchWindow.SelectedResult;
                     var gameName = selected.Title;
                     var pageUrl = selected.Url;
-                    var threshold = searchWindow.PriceThreshold;
+                    var keyThreshold = searchWindow.KeyPriceThreshold;
+                    var accountThreshold = searchWindow.AccountPriceThreshold;
                     var imageUrl = selected.ImageUrl;
 
-                    await AddGameAsync(gameName, pageUrl, threshold, imageUrl);
+                    await AddGameAsync(gameName, pageUrl, keyThreshold, accountThreshold, imageUrl);
                 }
             }
             catch (Exception ex)
@@ -134,14 +135,14 @@ namespace AllKeyShopExtension.Views
             }
         }
 
-        private async Task AddGameAsync(string gameName, string pageUrl, decimal? threshold, string imageUrl = null)
+        private async Task AddGameAsync(string gameName, string pageUrl, decimal? keyThreshold, decimal? accountThreshold, string imageUrl = null)
         {
             try
             {
                 ShowLoading(true);
                 StatusText.Text = $"Adding '{gameName}'...";
 
-                var added = priceService.AddWatchedGame(gameName, pageUrl, threshold, imageUrl);
+                var added = priceService.AddWatchedGame(gameName, pageUrl, keyThreshold, accountThreshold, imageUrl);
                 if (added)
                 {
                     LoadGames();
@@ -309,12 +310,12 @@ namespace AllKeyShopExtension.Views
             {
                 if (sender is Button btn && btn.Tag is WatchedGame game)
                 {
-                    // Build a small WPF dialog for editing the threshold
+                    // Build a WPF dialog for editing dual thresholds (Key + Account)
                     var dialog = new Window
                     {
-                        Title = $"Edit Threshold - {game.GameName}",
-                        Width = 400,
-                        Height = 200,
+                        Title = $"Edit Thresholds - {game.GameName}",
+                        Width = 420,
+                        Height = 300,
                         WindowStartupLocation = WindowStartupLocation.CenterScreen,
                         ResizeMode = ResizeMode.NoResize,
                         Background = System.Windows.Media.Brushes.DimGray,
@@ -323,62 +324,111 @@ namespace AllKeyShopExtension.Views
 
                     var stack = new StackPanel { Margin = new Thickness(20) };
 
-                    var label = new TextBlock
+                    var titleLabel = new TextBlock
                     {
-                        Text = $"Price threshold for \"{game.GameName}\":",
+                        Text = $"Price thresholds for \"{game.GameName}\":",
                         FontSize = 13,
                         Foreground = System.Windows.Media.Brushes.White,
-                        Margin = new Thickness(0, 0, 0, 8)
+                        Margin = new Thickness(0, 0, 0, 12)
                     };
-                    stack.Children.Add(label);
+                    stack.Children.Add(titleLabel);
 
-                    var currentLabel = new TextBlock
+                    // Key threshold row
+                    var keyLabel = new TextBlock
                     {
-                        Text = game.PriceThreshold.HasValue
-                            ? $"Current threshold: {game.PriceThreshold.Value:0.00}€"
-                            : "No threshold set",
-                        FontSize = 11,
-                        Foreground = System.Windows.Media.Brushes.LightGray,
-                        Margin = new Thickness(0, 0, 0, 8)
+                        Text = game.KeyPriceThreshold.HasValue
+                            ? $"Key threshold (current: {game.KeyPriceThreshold.Value:0.00}€):"
+                            : "Key threshold (not set):",
+                        FontSize = 12,
+                        Foreground = System.Windows.Media.Brushes.White,
+                        Margin = new Thickness(0, 0, 0, 4)
                     };
-                    stack.Children.Add(currentLabel);
+                    stack.Children.Add(keyLabel);
 
-                    var textBox = new TextBox
+                    var keyTextBox = new TextBox
                     {
-                        Text = game.PriceThreshold.HasValue ? game.PriceThreshold.Value.ToString("0.00") : "",
+                        Text = game.KeyPriceThreshold.HasValue ? game.KeyPriceThreshold.Value.ToString("0.00") : "",
                         FontSize = 14,
                         Padding = new Thickness(8, 6, 8, 6),
                         Margin = new Thickness(0, 0, 0, 12)
                     };
-                    stack.Children.Add(textBox);
+                    stack.Children.Add(keyTextBox);
 
+                    // Account threshold row
+                    var accountLabel = new TextBlock
+                    {
+                        Text = game.AccountPriceThreshold.HasValue
+                            ? $"Account threshold (current: {game.AccountPriceThreshold.Value:0.00}€):"
+                            : "Account threshold (not set):",
+                        FontSize = 12,
+                        Foreground = System.Windows.Media.Brushes.White,
+                        Margin = new Thickness(0, 0, 0, 4)
+                    };
+                    stack.Children.Add(accountLabel);
+
+                    var accountTextBox = new TextBox
+                    {
+                        Text = game.AccountPriceThreshold.HasValue ? game.AccountPriceThreshold.Value.ToString("0.00") : "",
+                        FontSize = 14,
+                        Padding = new Thickness(8, 6, 8, 6),
+                        Margin = new Thickness(0, 0, 0, 14)
+                    };
+                    stack.Children.Add(accountTextBox);
+
+                    // Buttons
                     var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
                     var saveBtn = new Button { Content = "Save", Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
-                    var clearBtn = new Button { Content = "Remove threshold", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var clearBtn = new Button { Content = "Remove all", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
                     var cancelBtn = new Button { Content = "Cancel", Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
 
-                    decimal? newThreshold = game.PriceThreshold;
+                    decimal? newKeyThreshold = game.KeyPriceThreshold;
+                    decimal? newAccountThreshold = game.AccountPriceThreshold;
                     bool saved = false;
 
                     saveBtn.Click += (s2, e2) =>
                     {
-                        var txt = textBox.Text.Trim().Replace(",", ".");
-                        if (decimal.TryParse(txt, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) && val > 0)
+                        // Parse key threshold (empty = null = no notification)
+                        var keyTxt = keyTextBox.Text.Trim().Replace(",", ".");
+                        if (string.IsNullOrEmpty(keyTxt))
                         {
-                            newThreshold = val;
-                            saved = true;
-                            dialog.Close();
+                            newKeyThreshold = null;
+                        }
+                        else if (decimal.TryParse(keyTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal kVal) && kVal > 0)
+                        {
+                            newKeyThreshold = kVal;
                         }
                         else
                         {
-                            MessageBox.Show("Enter a valid price (e.g. 15.50)", "Invalid value",
+                            MessageBox.Show("Enter a valid key price (e.g. 15.50) or leave empty.", "Invalid value",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
                         }
+
+                        // Parse account threshold (empty = null = no notification)
+                        var accTxt = accountTextBox.Text.Trim().Replace(",", ".");
+                        if (string.IsNullOrEmpty(accTxt))
+                        {
+                            newAccountThreshold = null;
+                        }
+                        else if (decimal.TryParse(accTxt, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal aVal) && aVal > 0)
+                        {
+                            newAccountThreshold = aVal;
+                        }
+                        else
+                        {
+                            MessageBox.Show("Enter a valid account price (e.g. 10.00) or leave empty.", "Invalid value",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                            return;
+                        }
+
+                        saved = true;
+                        dialog.Close();
                     };
 
                     clearBtn.Click += (s2, e2) =>
                     {
-                        newThreshold = null;
+                        newKeyThreshold = null;
+                        newAccountThreshold = null;
                         saved = true;
                         dialog.Close();
                     };
@@ -393,11 +443,15 @@ namespace AllKeyShopExtension.Views
 
                     if (saved)
                     {
-                        priceService.UpdateThreshold(game.Id, newThreshold);
+                        priceService.UpdateThresholds(game.Id, newKeyThreshold, newAccountThreshold);
                         LoadGames();
-                        StatusText.Text = newThreshold.HasValue
-                            ? $"Threshold for '{game.GameName}' updated to {newThreshold.Value:0.00}€"
-                            : $"Threshold for '{game.GameName}' removed";
+
+                        var parts = new System.Collections.Generic.List<string>();
+                        if (newKeyThreshold.HasValue) parts.Add($"Key: {newKeyThreshold.Value:0.00}€");
+                        if (newAccountThreshold.HasValue) parts.Add($"Account: {newAccountThreshold.Value:0.00}€");
+                        StatusText.Text = parts.Count > 0
+                            ? $"Thresholds for '{game.GameName}' updated: {string.Join(", ", parts)}"
+                            : $"All thresholds for '{game.GameName}' removed";
                     }
                 }
             }

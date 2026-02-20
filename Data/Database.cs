@@ -88,6 +88,19 @@ namespace AllKeyShopExtension.Data
                     MigrateAddColumn(connection, "WatchedGames", "AccountSeller", "TEXT");
                     MigrateAddColumn(connection, "WatchedGames", "AllKeyShopPageUrl", "TEXT");
                     MigrateAddColumn(connection, "WatchedGames", "ImageUrl", "TEXT");
+                    MigrateAddColumn(connection, "WatchedGames", "KeyPriceThreshold", "REAL");
+                    MigrateAddColumn(connection, "WatchedGames", "AccountPriceThreshold", "REAL");
+
+                    // Migrate old PriceThreshold → KeyPriceThreshold (one-time)
+                    try
+                    {
+                        using (var migCmd = new SQLiteCommand(
+                            "UPDATE WatchedGames SET KeyPriceThreshold = PriceThreshold WHERE KeyPriceThreshold IS NULL AND PriceThreshold IS NOT NULL", connection))
+                        {
+                            migCmd.ExecuteNonQuery();
+                        }
+                    }
+                    catch { /* PriceThreshold column may not exist in fresh DBs */ }
                 }
             }
         }
@@ -188,9 +201,11 @@ namespace AllKeyShopExtension.Data
                     var query = @"
                         INSERT OR REPLACE INTO WatchedGames 
                         (GameName, LastPrice, LastSeller, LastUrl, LastUpdate, PriceThreshold, DateAdded,
-                         KeyPrice, KeySeller, AccountPrice, AccountSeller, AllKeyShopPageUrl, ImageUrl)
+                         KeyPrice, KeySeller, AccountPrice, AccountSeller, AllKeyShopPageUrl, ImageUrl,
+                         KeyPriceThreshold, AccountPriceThreshold)
                         VALUES (@GameName, @LastPrice, @LastSeller, @LastUrl, @LastUpdate, @PriceThreshold, @DateAdded,
-                                @KeyPrice, @KeySeller, @AccountPrice, @AccountSeller, @AllKeyShopPageUrl, @ImageUrl)";
+                                @KeyPrice, @KeySeller, @AccountPrice, @AccountSeller, @AllKeyShopPageUrl, @ImageUrl,
+                                @KeyPriceThreshold, @AccountPriceThreshold)";
                     using (var command = new SQLiteCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@GameName", game.GameName);
@@ -198,7 +213,7 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@LastSeller", (object)game.LastSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@LastUrl", (object)game.LastUrl ?? DBNull.Value);
                         command.Parameters.AddWithValue("@LastUpdate", game.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
-                        command.Parameters.AddWithValue("@PriceThreshold", (object)game.PriceThreshold ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@PriceThreshold", (object)game.KeyPriceThreshold ?? DBNull.Value);
                         command.Parameters.AddWithValue("@DateAdded", game.DateAdded.ToString("yyyy-MM-dd HH:mm:ss"));
                         command.Parameters.AddWithValue("@KeyPrice", (object)game.KeyPrice ?? DBNull.Value);
                         command.Parameters.AddWithValue("@KeySeller", (object)game.KeySeller ?? DBNull.Value);
@@ -206,6 +221,8 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
                         command.Parameters.AddWithValue("@ImageUrl", (object)game.ImageUrl ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@KeyPriceThreshold", (object)game.KeyPriceThreshold ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountPriceThreshold", (object)game.AccountPriceThreshold ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -225,7 +242,8 @@ namespace AllKeyShopExtension.Data
                             LastUpdate = @LastUpdate, PriceThreshold = @PriceThreshold,
                             KeyPrice = @KeyPrice, KeySeller = @KeySeller,
                             AccountPrice = @AccountPrice, AccountSeller = @AccountSeller,
-                            AllKeyShopPageUrl = @AllKeyShopPageUrl, ImageUrl = @ImageUrl
+                            AllKeyShopPageUrl = @AllKeyShopPageUrl, ImageUrl = @ImageUrl,
+                            KeyPriceThreshold = @KeyPriceThreshold, AccountPriceThreshold = @AccountPriceThreshold
                         WHERE Id = @Id";
                     using (var command = new SQLiteCommand(query, connection))
                     {
@@ -234,13 +252,15 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@LastSeller", (object)game.LastSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@LastUrl", (object)game.LastUrl ?? DBNull.Value);
                         command.Parameters.AddWithValue("@LastUpdate", game.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
-                        command.Parameters.AddWithValue("@PriceThreshold", (object)game.PriceThreshold ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@PriceThreshold", (object)game.KeyPriceThreshold ?? DBNull.Value);
                         command.Parameters.AddWithValue("@KeyPrice", (object)game.KeyPrice ?? DBNull.Value);
                         command.Parameters.AddWithValue("@KeySeller", (object)game.KeySeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AccountPrice", (object)game.AccountPrice ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
                         command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
                         command.Parameters.AddWithValue("@ImageUrl", (object)game.ImageUrl ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@KeyPriceThreshold", (object)game.KeyPriceThreshold ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountPriceThreshold", (object)game.AccountPriceThreshold ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -405,7 +425,6 @@ namespace AllKeyShopExtension.Data
                 LastSeller = reader["LastSeller"] == DBNull.Value ? null : reader["LastSeller"].ToString(),
                 LastUrl = reader["LastUrl"] == DBNull.Value ? null : reader["LastUrl"].ToString(),
                 LastUpdate = reader["LastUpdate"] == DBNull.Value ? DateTime.MinValue : DateTime.Parse(reader["LastUpdate"].ToString()),
-                PriceThreshold = reader["PriceThreshold"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["PriceThreshold"]),
                 DateAdded = DateTime.Parse(reader["DateAdded"].ToString())
             };
 
@@ -418,6 +437,18 @@ namespace AllKeyShopExtension.Data
                 game.AccountSeller = ReadStringOrNull(reader, "AccountSeller");
                 game.AllKeyShopPageUrl = ReadStringOrNull(reader, "AllKeyShopPageUrl");
                 game.ImageUrl = ReadStringOrNull(reader, "ImageUrl");
+                game.KeyPriceThreshold = ReadDecimalOrNull(reader, "KeyPriceThreshold");
+                game.AccountPriceThreshold = ReadDecimalOrNull(reader, "AccountPriceThreshold");
+
+                // Migrate legacy single threshold to key threshold if new columns are empty
+                if (!game.KeyPriceThreshold.HasValue && !game.AccountPriceThreshold.HasValue)
+                {
+                    var legacyThreshold = reader["PriceThreshold"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["PriceThreshold"]);
+                    if (legacyThreshold.HasValue)
+                    {
+                        game.KeyPriceThreshold = legacyThreshold;
+                    }
+                }
             }
             catch { /* columns may not exist yet */ }
 

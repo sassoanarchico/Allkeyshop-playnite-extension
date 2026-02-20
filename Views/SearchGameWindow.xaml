@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:local="clr-namespace:AllKeyShopExtension.Views"
         Title="Search Game on AllKeyShop"
-        Width="650" Height="520"
+        Width="750" Height="520"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanResizeWithGrip"
         Background="{DynamicResource PopupBackgroundBrush}"
@@ -124,27 +124,37 @@
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             
             <TextBlock Grid.Column="0"
-                       Text="Price threshold (€):" 
+                       Text="Key threshold (€):" 
                        VerticalAlignment="Center" Margin="0,0,8,0"/>
-            <TextBox x:Name="ThresholdTextBox" 
+            <TextBox x:Name="KeyThresholdTextBox" 
                      Grid.Column="1" 
-                     Width="80" HorizontalAlignment="Left"
+                     Width="70" HorizontalAlignment="Left"
+                     Padding="6,4"/>
+            
+            <TextBlock Grid.Column="2"
+                       Text="Account threshold (€):" 
+                       VerticalAlignment="Center" Margin="12,0,8,0"/>
+            <TextBox x:Name="AccountThresholdTextBox" 
+                     Grid.Column="3" 
+                     Width="70" HorizontalAlignment="Left"
                      Padding="6,4"/>
             
             <Button x:Name="ConfirmButton" 
-                    Grid.Column="3" 
+                    Grid.Column="5" 
                     Content="Add" 
                     Padding="20,8" Margin="0,0,8,0"
                     IsEnabled="False"
                     Click="ConfirmButton_Click"/>
             <Button x:Name="CancelButton" 
-                    Grid.Column="4" 
+                    Grid.Column="6" 
                     Content="Cancel" 
                     Padding="20,8"
                     IsCancel="True"
