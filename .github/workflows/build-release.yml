@@ -97,7 +97,6 @@ jobs:
 
       - name: Read version from extension.yaml
         shell: pwsh
-        working-directory: AllKeyShopExtension
         run: |
           $ErrorActionPreference = "Stop"
           $line = Select-String -Path "extension.yaml" -Pattern "^\s*Version\s*:" | Select-Object -First 1
@@ -110,21 +109,18 @@ jobs:
 
       - name: Restore NuGet packages
         shell: pwsh
-        working-directory: AllKeyShopExtension
         run: |
           $ErrorActionPreference = "Stop"
           dotnet restore "AllKeyShopExtension.csproj"
 
       - name: Build (Release)
         shell: pwsh
-        working-directory: AllKeyShopExtension
         run: |
           $ErrorActionPreference = "Stop"
           msbuild "AllKeyShopExtension.csproj" /t:Rebuild /p:Configuration=Release /v:minimal
 
       - name: Create .pext package
         shell: pwsh
-        working-directory: AllKeyShopExtension
         run: |
           $ErrorActionPreference = "Stop"
           $releaseDir = Join-Path $PWD "bin\Release"
@@ -149,7 +145,7 @@ jobs:
           $ErrorActionPreference = "Stop"
 
           $tag = $env:TAG
-          $file = Join-Path "AllKeyShopExtension" "AllKeyShopExtension_v$($env:VERSION).pext"
+          $file = "AllKeyShopExtension_v$($env:VERSION).pext"
           if (-not (Test-Path $file)) { throw "File not found: $file" }
 
           # Create release if missing, otherwise keep it and just overwrite the asset.
