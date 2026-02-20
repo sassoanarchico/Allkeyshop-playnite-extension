@@ -1,10 +1,13 @@
 using Playnite.SDK;
 using Playnite.SDK.Plugins;
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Media;
 using System.Windows.Threading;
 using AllKeyShopExtension.Data;
 using AllKeyShopExtension.Services;
@@ -24,7 +27,7 @@ namespace AllKeyShopExtension
         private DispatcherTimer priceUpdateTimer;
         private DispatcherTimer freeGamesCheckTimer;
 
-        public override Guid Id { get; } = Guid.Parse("a1b2c3d4-e5f6-7890-abcd-ef1234567890");
+        public override Guid Id { get; } = Guid.Parse("c1d2e3f4-a5b6-7890-cdef-1234567890ab");
 
         public AllKeyShopPlugin(IPlayniteAPI api) : base(api)
         {
@@ -72,13 +75,29 @@ namespace AllKeyShopExtension
                     logger.Debug("NotificationService initialized");
 
                     // Start background tasks (delayed to avoid blocking initialization)
-                    Task.Run(() =>
+                    Task.Run(async () =>
                     {
-                        Thread.Sleep(2000); // Wait 2 seconds
-                        Application.Current?.Dispatcher.Invoke(() =>
+                        await Task.Delay(2000); // Wait 2 seconds without blocking thread pool
+                        try
                         {
-                            StartTimers();
-                        });
+                            // Use Dispatcher.CurrentDispatcher or check if application is still running
+                            var dispatcher = Application.Current?.Dispatcher ?? Dispatcher.CurrentDispatcher;
+                            if (dispatcher != null && !dispatcher.HasShutdownStarted && !dispatcher.HasShutdownFinished)
+                            {
+                                dispatcher.Invoke(() =>
+                                {
+                                    // Double-check that plugin hasn't been disposed
+                                    if (priceUpdateTimer != null || freeGamesCheckTimer != null)
+                                    {
+                                        StartTimers();
+                                    }
+                                });
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Warn(ex, "Failed to start timers - application may be shutting down");
+                        }
                     });
 
                     logger.Info("AllKeyShop Extension initialized successfully");
@@ -117,16 +136,140 @@ namespace AllKeyShopExtension
             }
         }
 
-        public override ISettings GetSettings(bool firstRunSettings)
+        /// <summary>
+        /// Helper method to ensure all required services are initialized
+        /// </summary>
+        private void EnsureServicesInitialized()
         {
             InitializeIfNeeded();
-            return new ExtensionSettingsView(PlayniteApi, database, settings);
+            
+            if (database == null)
+            {
+                logger.Error("Database not initialized, creating new instance");
+                database = new Database(PlayniteApi);
+            }
+            
+            if (settings == null)
+            {
+                logger.Warn("Settings not initialized, loading from database");
+                settings = database.GetSettings();
+                if (settings == null)
+                {
+                    settings = new Models.ExtensionSettings();
+                    database.SaveSettings(settings);
+                }
+            }
+            
+            // Ensure priceService is initialized
+            if (priceService == null)
+            {
+                logger.Warn("PriceService not initialized, initializing now");
+                if (scraper == null)
+                {
+                    scraper = new AllKeyShopScraper(PlayniteApi);
+                }
+                priceService = new PriceService(database, scraper, PlayniteApi);
+            }
+        }
+
+        public override ISettings GetSettings(bool firstRunSettings)
+        {
+            try
+            {
+                EnsureServicesInitialized();
+                return new ExtensionSettingsView(PlayniteApi, database, settings, priceService);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error in GetSettings");
+                // Return a basic settings view even if there's an error
+                try
+                {
+                    EnsureServicesInitialized();
+                    return new ExtensionSettingsView(PlayniteApi, database, settings, priceService);
+                }
+                catch
+                {
+                    // Last resort - return null and let Playnite handle it
+                    return null;
+                }
+            }
         }
 
         public override UserControl GetSettingsView(bool firstRunSettings)
         {
-            InitializeIfNeeded();
-            return new SettingsView(PlayniteApi, database, settings, priceService);
+            try
+            {
+                EnsureServicesInitialized();
+                return new SettingsView(PlayniteApi, database, settings, priceService);
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error in GetSettingsView");
+                // Return a basic settings view even if there's an error
+                try
+                {
+                    EnsureServicesInitialized();
+                    return new SettingsView(PlayniteApi, database, settings, priceService);
+                }
+                catch (Exception ex2)
+                {
+                    logger.Error(ex2, "Critical error creating SettingsView");
+                    // Return a simple error message UserControl
+                    var errorControl = new UserControl();
+                    errorControl.Content = new TextBlock 
+                    { 
+                        Text = "Errore nel caricamento delle impostazioni. Controlla i log per dettagli.",
+                        Margin = new Thickness(20),
+                        TextWrapping = TextWrapping.Wrap
+                    };
+                    return errorControl;
+                }
+            }
+        }
+
+        // Sidebar integration
+        public override IEnumerable<SidebarItem> GetSidebarItems()
+        {
+            return new List<SidebarItem>
+            {
+                new SidebarItem
+                {
+                    Title = "AllKeyShop",
+                    Type = SiderbarItemType.View,
+                    Icon = new TextBlock
+                    {
+                        Text = "\uEF40",
+                        FontFamily = new FontFamily("Segoe MDL2 Assets"),
+                        FontSize = 20
+                    },
+                    Opened = () =>
+                    {
+                        try
+                        {
+                            EnsureServicesInitialized();
+                            return new AllKeyShopSidebarView(
+                                PlayniteApi,
+                                priceService,
+                                freeGamesService,
+                                database,
+                                settings);
+                        }
+                        catch (Exception ex)
+                        {
+                            logger.Error(ex, "Error creating sidebar view");
+                            var errorControl = new UserControl();
+                            errorControl.Content = new TextBlock
+                            {
+                                Text = "Errore nel caricamento della sidebar AllKeyShop. Controlla i log.",
+                                Margin = new Thickness(20),
+                                TextWrapping = TextWrapping.Wrap
+                            };
+                            return errorControl;
+                        }
+                    }
+                }
+            };
         }
 
         private void StartTimers()

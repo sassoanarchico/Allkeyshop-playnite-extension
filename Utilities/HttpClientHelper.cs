@@ -21,7 +21,26 @@ namespace AllKeyShopExtension.Utilities
         public async Task<string> GetStringAsync(string url)
         {
             await EnsureRateLimit();
-            return await httpClient.GetStringAsync(url);
+            try
+            {
+                var response = await httpClient.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    return await response.Content.ReadAsStringAsync();
+                }
+                else
+                {
+                    throw new HttpRequestException($"HTTP {(int)response.StatusCode} {response.StatusCode} for {url}");
+                }
+            }
+            catch (HttpRequestException)
+            {
+                throw; // Re-throw HTTP errors
+            }
+            catch (Exception ex)
+            {
+                throw new HttpRequestException($"Error requesting {url}: {ex.Message}", ex);
+            }
         }
 
         private async Task EnsureRateLimit()

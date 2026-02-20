@@ -1,0 +1,237 @@
+<UserControl x:Class="AllKeyShopExtension.Views.AllKeyShopSidebarView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             d:DesignHeight="700" d:DesignWidth="1000"
+             Foreground="{DynamicResource TextBrush}">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <StackPanel Grid.Row="0" Margin="15,10,15,5">
+            <TextBlock Text="AllKeyShop Price Monitor" 
+                      FontSize="20" 
+                      FontWeight="Bold"
+                      Margin="0,0,0,5"/>
+            <TextBlock Text="Monitora i prezzi dei tuoi giochi e scopri i giochi gratis" 
+                      FontSize="12" 
+                      Opacity="0.7"/>
+        </StackPanel>
+
+        <!-- Toolbar -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" Margin="15,5,15,5">
+            <Button x:Name="AddGameButton" Content="&#xEFD9; Aggiungi Gioco" 
+                   Padding="12,6" Margin="0,0,5,0"
+                   Click="AddGameButton_Click"
+                   ToolTip="Aggiungi un gioco da monitorare"/>
+            <Button x:Name="RefreshButton" Content="&#xE72C; Aggiorna Prezzi" 
+                   Padding="12,6" Margin="0,0,5,0"
+                   Click="RefreshButton_Click"
+                   ToolTip="Aggiorna tutti i prezzi"/>
+            <Button x:Name="ShowFreeGamesButton" Content="&#xE734; Giochi Gratis" 
+                   Padding="12,6" Margin="0,0,5,0"
+                   Click="ShowFreeGamesButton_Click"
+                   ToolTip="Controlla giochi gratis"/>
+            <TextBlock x:Name="StatusText" 
+                      VerticalAlignment="Center" 
+                      Margin="10,0,0,0"
+                      Opacity="0.7"/>
+        </StackPanel>
+
+        <!-- Main content: Watched Games List -->
+        <DataGrid x:Name="GamesDataGrid" 
+                 Grid.Row="2" 
+                 Margin="15,5,15,5"
+                 AutoGenerateColumns="False"
+                 IsReadOnly="True"
+                 SelectionMode="Single"
+                 CanUserSortColumns="True"
+                 MouseDoubleClick="GamesDataGrid_MouseDoubleClick"
+                 GridLinesVisibility="Horizontal"
+                 HeadersVisibility="Column"
+                 BorderThickness="1"
+                 RowHeight="36"
+                 Foreground="{DynamicResource TextBrush}"
+                 Background="{DynamicResource ControlBackgroundBrush}"
+                 RowBackground="{DynamicResource ControlBackgroundBrush}"
+                 AlternatingRowBackground="{DynamicResource WindowBackgroundBrush}">
+            <DataGrid.ColumnHeaderStyle>
+                <Style TargetType="DataGridColumnHeader">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+                    <Setter Property="Padding" Value="6,4"/>
+                    <Setter Property="FontWeight" Value="SemiBold"/>
+                </Style>
+            </DataGrid.ColumnHeaderStyle>
+            <DataGrid.CellStyle>
+                <Style TargetType="DataGridCell">
+                    <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                    <Setter Property="BorderBrush" Value="Transparent"/>
+                </Style>
+            </DataGrid.CellStyle>
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Gioco" 
+                                  Binding="{Binding GameName}" 
+                                  Width="*"
+                                  MinWidth="200"/>
+                <DataGridTextColumn Header="Prezzo Key" 
+                                  Binding="{Binding KeyPriceDisplay}" 
+                                  Width="110"/>
+                <DataGridTextColumn Header="Prezzo Account" 
+                                  Binding="{Binding AccountPriceDisplay}" 
+                                  Width="120"/>
+                <DataGridTextColumn Header="Migliore" 
+                                  Binding="{Binding BestPriceDisplay}" 
+                                  Width="100"/>
+                <DataGridTextColumn Header="Soglia" 
+                                  Binding="{Binding PriceThreshold, StringFormat={}{0:C}}" 
+                                  Width="80"/>
+                <DataGridTextColumn Header="Aggiornato" 
+                                  Binding="{Binding LastUpdate, StringFormat={}{0:g}}" 
+                                  Width="140"/>
+                <DataGridTemplateColumn Header="Azioni" Width="190">
+                    <DataGridTemplateColumn.CellTemplate>
+                        <DataTemplate>
+                            <StackPanel Orientation="Horizontal">
+                                <Button Content="Apri" 
+                                       Click="OpenUrlButton_Click"
+                                       Tag="{Binding}"
+                                       Padding="6,2" Margin="2,0"
+                                       ToolTip="Apri la pagina AllKeyShop"/>
+                                <Button Content="Compra" 
+                                       Click="BuyButton_Click"
+                                       Tag="{Binding}"
+                                       Padding="6,2" Margin="2,0"
+                                       ToolTip="Vai all'offerta migliore"/>
+                                <Button Content="Aggiorna" 
+                                       Click="UpdateSingleButton_Click"
+                                       Tag="{Binding}"
+                                       Padding="6,2" Margin="2,0"/>
+                                <Button Content="X" 
+                                       Click="RemoveButton_Click"
+                                       Tag="{Binding Id}"
+                                       Padding="6,2" Margin="2,0"
+                                       ToolTip="Rimuovi"/>
+                            </StackPanel>
+                        </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                </DataGridTemplateColumn>
+            </DataGrid.Columns>
+        </DataGrid>
+
+        <!-- Empty State -->
+        <StackPanel x:Name="EmptyStatePanel" 
+                   Grid.Row="2" 
+                   HorizontalAlignment="Center" 
+                   VerticalAlignment="Center"
+                   Visibility="Collapsed">
+            <TextBlock Text="Nessun gioco monitorato" 
+                      FontSize="16" 
+                      Opacity="0.5"
+                      HorizontalAlignment="Center"
+                      Margin="0,0,0,10"/>
+            <TextBlock Text="Clicca su 'Aggiungi Gioco' per iniziare a monitorare i prezzi su AllKeyShop" 
+                      FontSize="12" 
+                      Opacity="0.4"
+                      HorizontalAlignment="Center"
+                      TextWrapping="Wrap"
+                      MaxWidth="400"/>
+        </StackPanel>
+
+        <!-- Free Games Section -->
+        <Expander x:Name="FreeGamesExpander" 
+                 Grid.Row="3" 
+                 Header="Giochi Gratis Recenti" 
+                 Margin="15,5,15,5"
+                 IsExpanded="False">
+            <Grid MaxHeight="200">
+                <DataGrid x:Name="FreeGamesDataGrid" 
+                         AutoGenerateColumns="False"
+                         IsReadOnly="True"
+                         GridLinesVisibility="Horizontal"
+                         HeadersVisibility="Column"
+                         RowHeight="30"
+                         Foreground="{DynamicResource TextBrush}"
+                         Background="{DynamicResource ControlBackgroundBrush}"
+                         RowBackground="{DynamicResource ControlBackgroundBrush}"
+                         AlternatingRowBackground="{DynamicResource WindowBackgroundBrush}">
+                    <DataGrid.ColumnHeaderStyle>
+                        <Style TargetType="DataGridColumnHeader">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Setter Property="Background" Value="{DynamicResource WindowBackgroundBrush}"/>
+                            <Setter Property="Padding" Value="6,4"/>
+                            <Setter Property="FontWeight" Value="SemiBold"/>
+                        </Style>
+                    </DataGrid.ColumnHeaderStyle>
+                    <DataGrid.CellStyle>
+                        <Style TargetType="DataGridCell">
+                            <Setter Property="Foreground" Value="{DynamicResource TextBrush}"/>
+                            <Setter Property="BorderBrush" Value="Transparent"/>
+                        </Style>
+                    </DataGrid.CellStyle>
+                    <DataGrid.Columns>
+                        <DataGridTextColumn Header="Gioco" 
+                                          Binding="{Binding GameName}" 
+                                          Width="*"/>
+                        <DataGridTextColumn Header="Tipo" 
+                                          Binding="{Binding Platform}" 
+                                          Width="140"/>
+                        <DataGridTextColumn Header="Trovato il" 
+                                          Binding="{Binding DateFound, StringFormat={}{0:d}}" 
+                                          Width="120"/>
+                        <DataGridTemplateColumn Header="" Width="60">
+                            <DataGridTemplateColumn.CellTemplate>
+                                <DataTemplate>
+                                    <Button Content="Apri" 
+                                           Click="OpenFreeGameUrl_Click"
+                                           Tag="{Binding}"
+                                           Padding="4,2"/>
+                                </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                        </DataGridTemplateColumn>
+                    </DataGrid.Columns>
+                </DataGrid>
+                <TextBlock x:Name="NoFreeGamesText"
+                          Text="Nessun gioco gratis trovato di recente"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center"
+                          Opacity="0.5"
+                          Visibility="Collapsed"/>
+            </Grid>
+        </Expander>
+
+        <!-- Loading Overlay -->
+        <Border x:Name="LoadingOverlay" 
+               Grid.Row="2" 
+               Opacity="0.85"
+               Visibility="Collapsed">
+            <StackPanel HorizontalAlignment="Center" 
+                       VerticalAlignment="Center">
+                <TextBlock Text="Caricamento..." 
+                          FontSize="14"
+                          HorizontalAlignment="Center"
+                          Margin="0,0,0,10"/>
+                <ProgressBar IsIndeterminate="True" 
+                            Width="200" 
+                            Height="16"/>
+            </StackPanel>
+        </Border>
+
+        <!-- Status Bar -->
+        <Border Grid.Row="4" Padding="15,5" Opacity="0.6">
+            <StackPanel Orientation="Horizontal">
+                <TextBlock x:Name="GameCountText" Text="0 giochi monitorati"/>
+                <TextBlock Text=" | " Margin="5,0"/>
+                <TextBlock x:Name="LastUpdateText" Text="Ultimo aggiornamento: mai"/>
+            </StackPanel>
+        </Border>
+    </Grid>
+</UserControl>

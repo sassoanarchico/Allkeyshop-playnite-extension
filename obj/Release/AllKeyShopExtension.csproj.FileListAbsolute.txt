@@ -19,3 +19,9 @@ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKey
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\bin\Release\HtmlAgilityPack.dll
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\bin\Release\Newtonsoft.Json.dll
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\bin\Release\System.Data.SQLite.dll
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\Views\AllKeyShopSidebarView.baml
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\Views\AllKeyShopSidebarView.g.cs
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\Views\SearchGameWindow.g.cs
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\GeneratedInternalTypeHelper.g.cs
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\AllKeyShopExtension_MarkupCompile.lref
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\Views\SearchGameWindow.baml

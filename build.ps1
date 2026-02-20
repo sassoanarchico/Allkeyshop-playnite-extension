@@ -24,17 +24,20 @@ if ([string]::IsNullOrEmpty($Version)) {
             $Version = $matches[1]
             Write-Host "Versione letta da extension.yaml: $Version" -ForegroundColor Cyan
         } else {
-            $Version = "0.1.0"
+            $Version = "0.1.1"
             Write-Host "Versione non trovata in extension.yaml, uso default: $Version" -ForegroundColor Yellow
         }
     } else {
-        $Version = "0.1.0"
+        $Version = "0.1.1"
         Write-Host "extension.yaml non trovato, uso versione default: $Version" -ForegroundColor Yellow
     }
 }
 
 $extensionName = "AllKeyShopExtension"
 $pextFile = "$extensionName-$Version.pext"
+
+Write-Host "Nome file .pext: $pextFile" -ForegroundColor Cyan
+Write-Host ""
 
 # Determina il percorso di Playnite
 Write-Host "`n[1/4] Verificando Playnite SDK..." -ForegroundColor Green

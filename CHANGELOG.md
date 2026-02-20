@@ -5,6 +5,52 @@ Tutte le modifiche notevoli a questo progetto saranno documentate in questo file
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.0.0/),
 e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
+## [0.2.1] - 2025-07-10
+
+### Corretto
+- **Prezzi con commissioni**: Il prezzo mostrato ora include le commissioni di pagamento ("Lowest Fees"), calcolato come il minimo tra il prezzo con carta e il prezzo con PayPal. Aggiunta proprietà `LowestFeePrice` al modello `OfferInfo`.
+- **Giochi gratis**: L'elenco dei giochi gratis ora viene popolato correttamente dalla pagina [Daily Game Deals](https://www.allkeyshop.com/blog/daily-game-deals/) di AllKeyShop, mostrando offerte gratuite, deal e promozioni attive. Aggiunto metodo `GetDailyGameDeals()` e `CheckForDailyDeals()`.
+- **Tema/Font**: L'interfaccia si adatta correttamente al tema attivo di Playnite (scuro/chiaro). Risolto il problema di testo scuro su sfondo scuro. Tutti i componenti (DataGrid, ListBox, finestre) ora utilizzano le risorse tema di Playnite (`TextBrush`, `WindowBackgroundBrush`, `ControlBackgroundBrush`, `PopupBackgroundBrush`). Aggiunti stili per DataGrid ColumnHeader e Cell.
+
+## [0.2.0] - 2025-07-09
+
+### Aggiunto
+- **Nuovo motore di scraping**: Riscrittura completa dello scraping basata sul JSON `gamePageTrans` integrato nelle pagine AllKeyShop, garantendo dati strutturati e affidabili.
+- **Ricerca giochi**: Nuova finestra di ricerca (`SearchGameWindow`) che utilizza l'API di ricerca di AllKeyShop per trovare e aggiungere giochi da monitorare.
+- **Prezzi Key e Account separati**: Distinzione tra offerte di tipo "key" e "account" con prezzi separati nella tabella di monitoraggio.
+- **Migrazione database**: Aggiunta automatica delle nuove colonne (`KeyPrice`, `AccountPrice`, `BuyUrl`, `BestMerchant`, `IsAccountOffer`) al database SQLite esistente.
+- **Modello OfferInfo completo**: Nuova classe `OfferInfo` con supporto per voucher, edizioni, regioni, commissioni (card/PayPal) e URL di acquisto diretto.
+
+### Modificato
+- Struttura dei modelli `GamePrice` e `WatchedGame` aggiornata con nuovi campi.
+- `PriceService` aggiornato per il nuovo flusso di scraping.
+- Vista sidebar aggiornata con colonne Key/Account/Migliore.
+
+## [0.1.2] - 2025-07-08
+
+### Corretto
+- **Errore di caricamento XAML**: Risolto `XamlParseException` causato da riferimenti errati a `SystemColors.WindowTextColorKey` nei template XAML.
+- **Vista sidebar**: Implementata la vista sidebar per il monitoraggio prezzi all'interno di Playnite.
+
+## [0.1.1] - 2025-01-22
+
+### Corretto
+- **Scraping AllKeyShop**: Migliorati i selettori CSS per trovare correttamente prezzo e venditore
+  - Aggiunti selettori multipli per gestire diverse strutture HTML del sito
+  - Migliorata l'estrazione del prezzo per supportare vari formati (€12.99, 12,99€, $12.99, ecc.)
+  - Aggiunto logging dettagliato per il debug dello scraping
+- **Gestione LastUpdate**: Corretto il problema per cui la data di ultimo aggiornamento veniva mostrata anche quando il prezzo non era disponibile
+  - LastUpdate viene aggiornato solo quando il prezzo è effettivamente disponibile
+- **Grafica e Tema**: Rimossi tutti i colori hardcoded e adattata l'interfaccia al tema Playnite
+  - Uso di DynamicResource con SystemColors per adattarsi automaticamente al tema scuro/chiaro
+  - Stili per DataGrid e controlli che seguono la palette di colori del tema
+  - Tutte le viste (PriceMonitorView, PriceMonitorWindow, SettingsView) ora si adattano al tema
+
+### Migliorato
+- **Scraping**: Aggiunti più selettori CSS per aumentare la probabilità di trovare i dati corretti
+- **Logging**: Aggiunto logging dettagliato per tracciare il processo di scraping
+- **Estrazione Prezzo**: Regex migliorata per estrarre prezzi da formati più vari
+
 ## [0.1.0] - 2024-12-19
 
 ### Aggiunto

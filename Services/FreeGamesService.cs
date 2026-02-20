@@ -43,7 +43,7 @@ namespace AllKeyShopExtension.Services
                 
                 foreach (var game in scrapedGames)
                 {
-                    if (!database.FreeGameExists(platform, game.GameName))
+                    if (!database.FreeGameExists(game.Platform, game.GameName))
                     {
                         // New free game found
                         database.AddFreeGame(game);
@@ -54,6 +54,34 @@ namespace AllKeyShopExtension.Services
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error checking for new free games on {platform}: {ex.Message}");
+            }
+
+            return newGames;
+        }
+
+        /// <summary>
+        /// Check for daily game deals from AllKeyShop (no platform needed).
+        /// </summary>
+        public async Task<List<FreeGame>> CheckForDailyDeals()
+        {
+            var newGames = new List<FreeGame>();
+
+            try
+            {
+                var scrapedGames = await scraper.GetDailyGameDeals();
+                
+                foreach (var game in scrapedGames)
+                {
+                    if (!database.FreeGameExists(game.Platform, game.GameName))
+                    {
+                        database.AddFreeGame(game);
+                        newGames.Add(game);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error checking for daily game deals");
             }
 
             return newGames;

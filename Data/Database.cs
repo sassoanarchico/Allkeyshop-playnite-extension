@@ -80,7 +80,29 @@ namespace AllKeyShopExtension.Data
                     {
                         command.ExecuteNonQuery();
                     }
+
+                    // Migration: add new columns if they don't exist
+                    MigrateAddColumn(connection, "WatchedGames", "KeyPrice", "REAL");
+                    MigrateAddColumn(connection, "WatchedGames", "KeySeller", "TEXT");
+                    MigrateAddColumn(connection, "WatchedGames", "AccountPrice", "REAL");
+                    MigrateAddColumn(connection, "WatchedGames", "AccountSeller", "TEXT");
+                    MigrateAddColumn(connection, "WatchedGames", "AllKeyShopPageUrl", "TEXT");
                 }
+            }
+        }
+
+        private void MigrateAddColumn(SQLiteConnection connection, string table, string column, string type)
+        {
+            try
+            {
+                using (var cmd = new SQLiteCommand($"ALTER TABLE {table} ADD COLUMN {column} {type}", connection))
+                {
+                    cmd.ExecuteNonQuery();
+                }
+            }
+            catch (SQLiteException)
+            {
+                // Column already exists - ignore
             }
         }
 
@@ -164,8 +186,10 @@ namespace AllKeyShopExtension.Data
                     connection.Open();
                     var query = @"
                         INSERT OR REPLACE INTO WatchedGames 
-                        (GameName, LastPrice, LastSeller, LastUrl, LastUpdate, PriceThreshold, DateAdded)
-                        VALUES (@GameName, @LastPrice, @LastSeller, @LastUrl, @LastUpdate, @PriceThreshold, @DateAdded)";
+                        (GameName, LastPrice, LastSeller, LastUrl, LastUpdate, PriceThreshold, DateAdded,
+                         KeyPrice, KeySeller, AccountPrice, AccountSeller, AllKeyShopPageUrl)
+                        VALUES (@GameName, @LastPrice, @LastSeller, @LastUrl, @LastUpdate, @PriceThreshold, @DateAdded,
+                                @KeyPrice, @KeySeller, @AccountPrice, @AccountSeller, @AllKeyShopPageUrl)";
                     using (var command = new SQLiteCommand(query, connection))
                     {
                         command.Parameters.AddWithValue("@GameName", game.GameName);
@@ -175,6 +199,11 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@LastUpdate", game.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
                         command.Parameters.AddWithValue("@PriceThreshold", (object)game.PriceThreshold ?? DBNull.Value);
                         command.Parameters.AddWithValue("@DateAdded", game.DateAdded.ToString("yyyy-MM-dd HH:mm:ss"));
+                        command.Parameters.AddWithValue("@KeyPrice", (object)game.KeyPrice ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@KeySeller", (object)game.KeySeller ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountPrice", (object)game.AccountPrice ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -191,7 +220,10 @@ namespace AllKeyShopExtension.Data
                     var query = @"
                         UPDATE WatchedGames 
                         SET LastPrice = @LastPrice, LastSeller = @LastSeller, LastUrl = @LastUrl, 
-                            LastUpdate = @LastUpdate, PriceThreshold = @PriceThreshold
+                            LastUpdate = @LastUpdate, PriceThreshold = @PriceThreshold,
+                            KeyPrice = @KeyPrice, KeySeller = @KeySeller,
+                            AccountPrice = @AccountPrice, AccountSeller = @AccountSeller,
+                            AllKeyShopPageUrl = @AllKeyShopPageUrl
                         WHERE Id = @Id";
                     using (var command = new SQLiteCommand(query, connection))
                     {
@@ -201,6 +233,11 @@ namespace AllKeyShopExtension.Data
                         command.Parameters.AddWithValue("@LastUrl", (object)game.LastUrl ?? DBNull.Value);
                         command.Parameters.AddWithValue("@LastUpdate", game.LastUpdate.ToString("yyyy-MM-dd HH:mm:ss"));
                         command.Parameters.AddWithValue("@PriceThreshold", (object)game.PriceThreshold ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@KeyPrice", (object)game.KeyPrice ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@KeySeller", (object)game.KeySeller ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountPrice", (object)game.AccountPrice ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AccountSeller", (object)game.AccountSeller ?? DBNull.Value);
+                        command.Parameters.AddWithValue("@AllKeyShopPageUrl", (object)game.AllKeyShopPageUrl ?? DBNull.Value);
                         command.ExecuteNonQuery();
                     }
                 }
@@ -357,7 +394,7 @@ namespace AllKeyShopExtension.Data
         // Helper methods
         private WatchedGame ReadWatchedGame(SQLiteDataReader reader)
         {
-            return new WatchedGame
+            var game = new WatchedGame
             {
                 Id = Convert.ToInt32(reader["Id"]),
                 GameName = reader["GameName"].ToString(),
@@ -368,6 +405,39 @@ namespace AllKeyShopExtension.Data
                 PriceThreshold = reader["PriceThreshold"] == DBNull.Value ? (decimal?)null : Convert.ToDecimal(reader["PriceThreshold"]),
                 DateAdded = DateTime.Parse(reader["DateAdded"].ToString())
             };
+
+            // Read new columns safely (may not exist in old DBs before migration runs)
+            try
+            {
+                game.KeyPrice = ReadDecimalOrNull(reader, "KeyPrice");
+                game.KeySeller = ReadStringOrNull(reader, "KeySeller");
+                game.AccountPrice = ReadDecimalOrNull(reader, "AccountPrice");
+                game.AccountSeller = ReadStringOrNull(reader, "AccountSeller");
+                game.AllKeyShopPageUrl = ReadStringOrNull(reader, "AllKeyShopPageUrl");
+            }
+            catch { /* columns may not exist yet */ }
+
+            return game;
+        }
+
+        private decimal? ReadDecimalOrNull(SQLiteDataReader reader, string column)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(column);
+                return reader.IsDBNull(ordinal) ? (decimal?)null : Convert.ToDecimal(reader[column]);
+            }
+            catch { return null; }
+        }
+
+        private string ReadStringOrNull(SQLiteDataReader reader, string column)
+        {
+            try
+            {
+                var ordinal = reader.GetOrdinal(column);
+                return reader.IsDBNull(ordinal) ? null : reader[column].ToString();
+            }
+            catch { return null; }
         }
 
         private FreeGame ReadFreeGame(SQLiteDataReader reader)

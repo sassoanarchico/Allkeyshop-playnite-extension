@@ -13,12 +13,11 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="#2D2D30" Padding="10">
+        <Border Grid.Row="0" Padding="10" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
                 <TextBlock Text="AllKeyShop Price Monitor" 
                           FontSize="16" 
                           FontWeight="Bold" 
-                          Foreground="White" 
                           VerticalAlignment="Center"/>
                 <Button Content="Aggiungi Gioco" 
                        Margin="10,0,0,0" 
@@ -30,8 +29,7 @@
                        Padding="10,5"/>
                 <TextBlock x:Name="StatusText" 
                           Margin="10,0,0,0" 
-                          VerticalAlignment="Center"
-                          Foreground="LightGray"/>
+                          VerticalAlignment="Center"/>
             </StackPanel>
         </Border>
 
@@ -73,12 +71,11 @@
         <!-- Loading Indicator -->
         <Border x:Name="LoadingOverlay" 
                Grid.Row="1" 
-               Background="#80000000" 
+               Opacity="0.8"
                Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" 
                        VerticalAlignment="Center">
                 <TextBlock Text="Caricamento..." 
-                          Foreground="White" 
                           FontSize="14"
                           Margin="0,0,0,10"/>
                 <ProgressBar IsIndeterminate="True" 
@@ -95,12 +92,12 @@
                    Visibility="Collapsed">
             <TextBlock Text="Nessun gioco monitorato" 
                       FontSize="14" 
-                      Foreground="Gray"
+                      Opacity="0.6"
                       HorizontalAlignment="Center"
                       Margin="0,0,0,10"/>
             <TextBlock Text="Clicca su 'Aggiungi Gioco' per iniziare a monitorare i prezzi" 
                       FontSize="12" 
-                      Foreground="DarkGray"
+                      Opacity="0.5"
                       HorizontalAlignment="Center"/>
         </StackPanel>
     </Grid>

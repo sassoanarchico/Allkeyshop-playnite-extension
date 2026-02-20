@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Windows.Controls;
 using AllKeyShopExtension.Data;
 using AllKeyShopExtension.Models;
+using AllKeyShopExtension.Services;
 using Playnite.SDK;
 using Playnite.SDK.Plugins;
 
@@ -11,13 +12,15 @@ namespace AllKeyShopExtension.Views
     {
         private readonly IPlayniteAPI playniteAPI;
         private readonly Database database;
+        private readonly PriceService priceService;
         private ExtensionSettings settings;
         private SettingsView settingsView;
 
-        public ExtensionSettingsView(IPlayniteAPI api, Database db, ExtensionSettings extensionSettings)
+        public ExtensionSettingsView(IPlayniteAPI api, Database db, ExtensionSettings extensionSettings, PriceService priceSvc = null)
         {
             playniteAPI = api;
             database = db;
+            priceService = priceSvc;
             settings = extensionSettings;
         }
 
@@ -28,7 +31,7 @@ namespace AllKeyShopExtension.Views
                 if (settingsView == null)
                 {
                     settings = database.GetSettings();
-                    settingsView = new SettingsView(playniteAPI, database, settings);
+                    settingsView = new SettingsView(playniteAPI, database, settings, priceService);
                 }
                 return settingsView;
             }
@@ -40,7 +43,7 @@ namespace AllKeyShopExtension.Views
             settings = database.GetSettings();
             if (settingsView != null)
             {
-                settingsView = new SettingsView(playniteAPI, database, settings);
+                settingsView = new SettingsView(playniteAPI, database, settings, priceService);
             }
         }
 

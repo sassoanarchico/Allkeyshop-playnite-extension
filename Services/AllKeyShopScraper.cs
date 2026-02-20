@@ -8,8 +8,9 @@ using System.Web;
 using AllKeyShopExtension.Models;
 using AllKeyShopExtension.Utilities;
 using HtmlAgilityPack;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Playnite.SDK;
-using Playnite.SDK.Plugins;
 
 namespace AllKeyShopExtension.Services
 {
@@ -20,6 +21,10 @@ namespace AllKeyShopExtension.Services
         private readonly HttpClientHelper httpClient;
         private readonly Dictionary<string, GamePrice> priceCache;
         private readonly TimeSpan cacheExpiration = TimeSpan.FromMinutes(10);
+
+        private const string SEARCH_API_URL = "https://www.allkeyshop.com/blog/wp-admin/admin-ajax.php";
+        private const string BASE_URL = "https://www.allkeyshop.com";
+        private const string OFFER_REDIRECT_URL = "https://www.allkeyshop.com/redirection/offer/eur/{0}?locale=en&merchant={1}";
 
         public AllKeyShopScraper(IPlayniteAPI api)
         {
@@ -33,12 +38,282 @@ namespace AllKeyShopExtension.Services
             httpClient?.Dispose();
         }
 
+        /// <summary>
+        /// Search for games on AllKeyShop using the quicksearch AJAX API.
+        /// Returns a list of search results for the user to choose from.
+        /// </summary>
+        public async Task<List<SearchResult>> SearchGamesAsync(string query)
+        {
+            var results = new List<SearchResult>();
+            if (string.IsNullOrWhiteSpace(query))
+                return results;
+
+            try
+            {
+                var encodedQuery = HttpUtility.UrlEncode(query);
+                var searchUrl = $"{SEARCH_API_URL}?action=quicksearch&search_name={encodedQuery}&currency=eur&locale=en&platform=all";
+
+                logger.Info($"Searching AllKeyShop: {query}");
+                var json = await httpClient.GetStringAsync(searchUrl);
+
+                var response = JObject.Parse(json);
+                var resultsHtml = response["results"]?.ToString();
+
+                if (string.IsNullOrEmpty(resultsHtml))
+                {
+                    logger.Warn($"No search results HTML for: {query}");
+                    return results;
+                }
+
+                var doc = new HtmlDocument();
+                doc.LoadHtml($"<html><body>{resultsHtml}</body></html>");
+
+                var rows = doc.DocumentNode.SelectNodes("//li[contains(@class, 'ls-results-row') and not(contains(@class, 'ls-last-row'))]");
+                if (rows == null)
+                {
+                    logger.Warn($"No result rows found for: {query}");
+                    return results;
+                }
+
+                foreach (var row in rows)
+                {
+                    try
+                    {
+                        var link = row.SelectSingleNode(".//a[contains(@class, 'ls-results-row-link')]");
+                        if (link == null) continue;
+
+                        var href = link.GetAttributeValue("href", "");
+                        if (string.IsNullOrEmpty(href) || !href.Contains("/blog/buy-")) continue;
+
+                        var titleNode = row.SelectSingleNode(".//h2[contains(@class, 'ls-results-row-game-title')]");
+                        var infoNode = row.SelectSingleNode(".//div[contains(@class, 'ls-results-row-game-infos')]");
+                        var priceNode = row.SelectSingleNode(".//div[contains(@class, 'ls-results-row-price')]");
+
+                        var title = titleNode?.InnerText?.Trim() ?? "";
+                        var info = infoNode?.InnerText?.Trim() ?? "";
+                        var platform = row.GetAttributeValue("data-platforms", "");
+
+                        // Parse platform and year from info like "PC - 2022"
+                        var infoParts = info.Split(new[] { " - " }, StringSplitOptions.RemoveEmptyEntries);
+                        var platformDisplay = infoParts.Length > 0 ? infoParts[0].Trim() : platform;
+                        var year = infoParts.Length > 1 ? infoParts[1].Trim() : "";
+
+                        // Parse price
+                        var stock = priceNode?.GetAttributeValue("data-stock", "") ?? "";
+                        var priceStr = priceNode?.GetAttributeValue("data-price", "0") ?? "0";
+                        decimal.TryParse(priceStr, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal price);
+
+                        // Parse image URL
+                        var imgDiv = row.SelectSingleNode(".//div[contains(@class, 'ls-results-row-image-ratio')]");
+                        var style = imgDiv?.GetAttributeValue("style", "") ?? "";
+                        var imageUrl = "";
+                        var imgMatch = Regex.Match(style, @"url\('([^']+)'\)");
+                        if (imgMatch.Success)
+                            imageUrl = imgMatch.Groups[1].Value;
+
+                        results.Add(new SearchResult
+                        {
+                            Title = HtmlEntity.DeEntitize(title),
+                            Url = href,
+                            Platform = platformDisplay,
+                            Year = year,
+                            Price = price,
+                            ImageUrl = imageUrl,
+                            InStock = stock == "in_stock"
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug($"Error parsing search result row: {ex.Message}");
+                    }
+                }
+
+                logger.Info($"Found {results.Count} search results for: {query}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error searching AllKeyShop for: {query}");
+            }
+
+            return results;
+        }
+
+        /// <summary>
+        /// Get detailed price information from a game's AllKeyShop page.
+        /// Parses the gamePageTrans JSON embedded in the HTML to get all offers.
+        /// </summary>
+        public async Task<GamePrice> GetGamePriceFromPage(string pageUrl, string gameName)
+        {
+            if (string.IsNullOrWhiteSpace(pageUrl))
+                return null;
+
+            // Check cache
+            var cacheKey = pageUrl.ToLowerInvariant();
+            if (priceCache.ContainsKey(cacheKey))
+            {
+                var cached = priceCache[cacheKey];
+                if (DateTime.Now - cached.RetrievedAt < cacheExpiration)
+                    return cached;
+            }
+
+            try
+            {
+                logger.Info($"Fetching game page: {pageUrl}");
+                var html = await httpClient.GetStringAsync(pageUrl);
+
+                // Extract gamePageTrans JSON from inline script
+                var gamePageTransJson = ExtractGamePageTrans(html);
+                if (gamePageTransJson == null)
+                {
+                    logger.Warn($"Could not find gamePageTrans in page: {pageUrl}");
+                    return null;
+                }
+
+                var gamePageTrans = JObject.Parse(gamePageTransJson);
+
+                // Parse prices array
+                var pricesArray = gamePageTrans["prices"] as JArray;
+                if (pricesArray == null || pricesArray.Count == 0)
+                {
+                    logger.Warn($"No prices found in gamePageTrans for: {pageUrl}");
+                    return new GamePrice
+                    {
+                        GameName = gameName,
+                        AllKeyShopPageUrl = pageUrl,
+                        IsAvailable = false,
+                        RetrievedAt = DateTime.Now
+                    };
+                }
+
+                var allOffers = new List<OfferInfo>();
+                var editions = gamePageTrans["editions"] as JObject;
+                var regions = gamePageTrans["regions"] as JObject;
+
+                foreach (var priceItem in pricesArray)
+                {
+                    try
+                    {
+                        var offer = new OfferInfo
+                        {
+                            OfferId = priceItem["id"]?.Value<int>() ?? 0,
+                            Price = priceItem["price"]?.Value<decimal>() ?? 0,
+                            OriginalPrice = priceItem["originalPrice"]?.Value<decimal>() ?? 0,
+                            MerchantName = priceItem["merchantName"]?.ToString() ?? "",
+                            MerchantId = priceItem["merchant"]?.Value<int>() ?? 0,
+                            IsOfficial = priceItem["isOfficial"]?.Value<bool>() ?? false,
+                            IsAccount = priceItem["account"]?.Value<bool>() ?? false,
+                            VoucherCode = priceItem["voucher_code"]?.ToString(),
+                            PriceWithPaypal = priceItem["pricePaypal"]?.Value<decimal>(),
+                            PriceWithCard = priceItem["priceCard"]?.Value<decimal>(),
+                        };
+
+                        // Resolve edition name
+                        var editionId = priceItem["edition"]?.ToString();
+                        if (editions != null && !string.IsNullOrEmpty(editionId) && editions[editionId] != null)
+                        {
+                            offer.Edition = editions[editionId]?["name"]?.ToString() ?? "Standard";
+                        }
+                        else
+                        {
+                            offer.Edition = "Standard";
+                        }
+
+                        // Resolve region name
+                        var regionId = priceItem["region"]?.ToString();
+                        if (regions != null && !string.IsNullOrEmpty(regionId) && regions[regionId] != null)
+                        {
+                            offer.Region = regions[regionId]?["region_name"]?.ToString() ?? regionId;
+                        }
+                        else
+                        {
+                            offer.Region = regionId ?? "";
+                        }
+
+                        // Build buy URL
+                        offer.BuyUrl = string.Format(OFFER_REDIRECT_URL, offer.OfferId, offer.MerchantId);
+
+                        allOffers.Add(offer);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug($"Error parsing offer: {ex.Message}");
+                    }
+                }
+
+                // Find best key offer (account=false, Standard edition preferred)
+                // Sort by LowestFeePrice (includes card/paypal fees)
+                var keyOffers = allOffers
+                    .Where(o => !o.IsAccount && o.Price > 0)
+                    .OrderBy(o => o.LowestFeePrice)
+                    .ToList();
+
+                var standardKeyOffers = keyOffers.Where(o => o.Edition == "Standard").ToList();
+                var bestKey = standardKeyOffers.FirstOrDefault() ?? keyOffers.FirstOrDefault();
+
+                // Find best account offer (account=true, Standard edition preferred)
+                var accountOffers = allOffers
+                    .Where(o => o.IsAccount && o.Price > 0)
+                    .OrderBy(o => o.LowestFeePrice)
+                    .ToList();
+
+                var standardAccountOffers = accountOffers.Where(o => o.Edition == "Standard").ToList();
+                var bestAccount = standardAccountOffers.FirstOrDefault() ?? accountOffers.FirstOrDefault();
+
+                // Best overall price (keys preferred)
+                var bestOverall = bestKey ?? bestAccount;
+
+                var gamePrice = new GamePrice
+                {
+                    GameName = gameName,
+                    AllKeyShopPageUrl = pageUrl,
+                    IsAvailable = bestOverall != null,
+                    RetrievedAt = DateTime.Now,
+                    AllOffers = allOffers,
+                };
+
+                if (bestOverall != null)
+                {
+                    gamePrice.Price = bestOverall.LowestFeePrice;
+                    gamePrice.Seller = bestOverall.MerchantName;
+                    gamePrice.Url = bestOverall.BuyUrl;
+                }
+
+                if (bestKey != null)
+                {
+                    gamePrice.KeyPrice = bestKey.LowestFeePrice;
+                    gamePrice.KeySeller = bestKey.MerchantName;
+                    gamePrice.KeyOfferUrl = bestKey.BuyUrl;
+                    gamePrice.KeyIsOfficial = bestKey.IsOfficial;
+                }
+
+                if (bestAccount != null)
+                {
+                    gamePrice.AccountPrice = bestAccount.LowestFeePrice;
+                    gamePrice.AccountSeller = bestAccount.MerchantName;
+                    gamePrice.AccountOfferUrl = bestAccount.BuyUrl;
+                }
+
+                // Cache result
+                priceCache[cacheKey] = gamePrice;
+
+                logger.Info($"Scraped prices for {gameName}: Key={gamePrice.KeyPrice} ({gamePrice.KeySeller}), Account={gamePrice.AccountPrice} ({gamePrice.AccountSeller}), Total offers={allOffers.Count}");
+
+                return gamePrice;
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Error getting price from page {pageUrl}: {ex.Message}");
+                return null;
+            }
+        }
+
+        /// <summary>
+        /// Legacy method: Search + auto-pick first result. Used for backward compatibility.
+        /// </summary>
         public async Task<GamePrice> GetGamePrice(string gameName)
         {
             if (string.IsNullOrWhiteSpace(gameName))
-            {
                 return null;
-            }
 
             // Check cache first
             var cacheKey = gameName.ToLowerInvariant();
@@ -46,216 +321,184 @@ namespace AllKeyShopExtension.Services
             {
                 var cached = priceCache[cacheKey];
                 if (DateTime.Now - cached.RetrievedAt < cacheExpiration)
-                {
                     return cached;
-                }
             }
 
             try
             {
-                // Search for game on AllKeyShop
-                var searchUrl = $"https://www.allkeyshop.com/blog/catalogue/search-{HttpUtility.UrlEncode(gameName)}.html";
-                var html = await httpClient.GetStringAsync(searchUrl);
+                // Search for the game
+                var searchResults = await SearchGamesAsync(gameName);
 
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-
-                // Try to find the first game result
-                var gameLink = doc.DocumentNode.SelectSingleNode("//a[contains(@class, 'search-product-link')] | //a[contains(@href, '/blog/buy-')]");
-                
-                if (gameLink == null)
+                if (searchResults.Count == 0)
                 {
-                    // Try alternative selectors
-                    gameLink = doc.DocumentNode.SelectSingleNode("//div[contains(@class, 'search-result')]//a[contains(@href, '/blog/buy-')]");
+                    logger.Warn($"No search results found for: {gameName}");
+                    return null;
                 }
 
-                if (gameLink != null)
-                {
-                    var gameUrl = gameLink.GetAttributeValue("href", "");
-                    if (!gameUrl.StartsWith("http"))
-                    {
-                        gameUrl = "https://www.allkeyshop.com" + gameUrl;
-                    }
+                // Try to find best match - prefer PC platform and exact/closest match
+                var pcResults = searchResults.Where(r =>
+                    r.Platform.IndexOf("pc", StringComparison.OrdinalIgnoreCase) >= 0 ||
+                    r.Platform.IndexOf("PC", StringComparison.OrdinalIgnoreCase) >= 0
+                ).ToList();
 
-                    // Get price from game page
-                    return await GetPriceFromGamePage(gameUrl, gameName);
+                var bestMatch = pcResults.FirstOrDefault() ?? searchResults.First();
+
+                logger.Info($"Auto-selected search result: {bestMatch.Title} ({bestMatch.Url})");
+
+                // Get detailed prices from the game page
+                var gamePrice = await GetGamePriceFromPage(bestMatch.Url, gameName);
+
+                if (gamePrice != null)
+                {
+                    // Cache under game name too
+                    priceCache[cacheKey] = gamePrice;
                 }
-
-                // If no direct match, try to parse search results
-                return ParseSearchResults(doc, gameName);
-            }
-            catch (Exception ex)
-            {
-                logger.Error(ex, $"Error scraping price for {gameName}: {ex.Message}");
-                return null;
-            }
-        }
-
-        private async Task<GamePrice> GetPriceFromGamePage(string gameUrl, string gameName)
-        {
-            try
-            {
-                var html = await httpClient.GetStringAsync(gameUrl);
-                var doc = new HtmlDocument();
-                doc.LoadHtml(html);
-
-                // Look for price information
-                var priceNode = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'price')] | //div[contains(@class, 'price')] | //span[contains(@data-price, '')]");
-                
-                if (priceNode == null)
-                {
-                    // Try alternative selectors
-                    priceNode = doc.DocumentNode.SelectSingleNode("//*[contains(@class, 'best-price')] | //*[contains(@class, 'lowest-price')]");
-                }
-
-                decimal price = 0;
-                string seller = null;
-
-                if (priceNode != null)
-                {
-                    var priceText = priceNode.InnerText;
-                    price = ExtractPrice(priceText);
-                }
-
-                // Try to find seller
-                var sellerNode = doc.DocumentNode.SelectSingleNode("//span[contains(@class, 'seller')] | //div[contains(@class, 'store')]");
-                if (sellerNode != null)
-                {
-                    seller = sellerNode.InnerText.Trim();
-                }
-
-                var gamePrice = new GamePrice
-                {
-                    GameName = gameName,
-                    Price = price,
-                    Seller = seller,
-                    Url = gameUrl,
-                    IsAvailable = price > 0
-                };
-
-                // Cache result
-                var cacheKey = gameName.ToLowerInvariant();
-                priceCache[cacheKey] = gamePrice;
 
                 return gamePrice;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error getting price from game page {gameUrl}: {ex.Message}");
+                logger.Error(ex, $"Error scraping price for {gameName}");
                 return null;
             }
         }
 
-        private GamePrice ParseSearchResults(HtmlDocument doc, string gameName)
+        /// <summary>
+        /// Extract the gamePageTrans JSON string from the HTML page.
+        /// It's embedded in a script tag like: var gamePageTrans = {...};
+        /// </summary>
+        private string ExtractGamePageTrans(string html)
         {
             try
             {
-                // Look for price in search results
-                var priceNodes = doc.DocumentNode.SelectNodes("//span[contains(@class, 'price')] | //div[contains(@class, 'price')]");
-                
-                if (priceNodes != null && priceNodes.Count > 0)
+                // Pattern: var gamePageTrans = {JSON};
+                // The JSON is on a single line in a <script> tag
+                var match = Regex.Match(html, @"var\s+gamePageTrans\s*=\s*(\{.+?\});\s*$",
+                    RegexOptions.Multiline);
+
+                if (match.Success)
                 {
-                    var firstPrice = priceNodes.First();
-                    var priceText = firstPrice.InnerText;
-                    var price = ExtractPrice(priceText);
-
-                    // Try to find link
-                    var linkNode = firstPrice.Ancestors("a").FirstOrDefault() 
-                        ?? firstPrice.SelectSingleNode("ancestor::a");
-                    
-                    string url = null;
-                    if (linkNode != null)
-                    {
-                        url = linkNode.GetAttributeValue("href", "");
-                        if (!url.StartsWith("http"))
-                        {
-                            url = "https://www.allkeyshop.com" + url;
-                        }
-                    }
-
-                    var gamePrice = new GamePrice
-                    {
-                        GameName = gameName,
-                        Price = price,
-                        Url = url,
-                        IsAvailable = price > 0
-                    };
-
-                    var cacheKey = gameName.ToLowerInvariant();
-                    priceCache[cacheKey] = gamePrice;
-
-                    return gamePrice;
+                    return match.Groups[1].Value;
                 }
+
+                // Alternative: look for it in a script block
+                match = Regex.Match(html, @"var\s+gamePageTrans\s*=\s*(\{.+?\});\s*//",
+                    RegexOptions.Singleline);
+
+                if (match.Success)
+                {
+                    return match.Groups[1].Value;
+                }
+
+                // Try finding the specific script tag
+                var doc = new HtmlDocument();
+                doc.LoadHtml(html);
+                var scripts = doc.DocumentNode.SelectNodes("//script[@id='aks-offers-js-extra']");
+                if (scripts != null)
+                {
+                    foreach (var script in scripts)
+                    {
+                        var content = script.InnerText;
+                        match = Regex.Match(content, @"var\s+gamePageTrans\s*=\s*(\{.+\});\s*$",
+                            RegexOptions.Multiline);
+                        if (match.Success)
+                            return match.Groups[1].Value;
+                    }
+                }
+
+                logger.Warn("Could not extract gamePageTrans from HTML");
+                return null;
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error parsing search results: {ex.Message}");
+                logger.Error(ex, "Error extracting gamePageTrans");
+                return null;
             }
-
-            return null;
         }
 
-        public async Task<List<FreeGame>> GetFreeGames(string platform)
+        /// <summary>
+        /// Scrape free game deals from the AllKeyShop widget.
+        /// Parses splide__slide entries for free games across all platforms.
+        /// </summary>
+        public async Task<List<FreeGame>> GetDailyGameDeals()
         {
             var freeGames = new List<FreeGame>();
 
             try
             {
-                // Map platform to AllKeyShop URL format
-                var platformUrl = MapPlatformToUrl(platform);
-                if (string.IsNullOrEmpty(platformUrl))
-                {
-                    return freeGames;
-                }
-
-                var url = $"https://www.allkeyshop.com/blog/free-games/{platformUrl}/";
+                var url = "https://widget.allkeyshop.com/lib/generate/widget?widgetType=deals&locale=en_GB&currency=eur&typeList=free&console=all&backgroundColor=transparent&priceBackgroundColor=147ac3&borderWidth=0&borderColor=000000&apiKey=aks";
+                logger.Info("Fetching free games from AllKeyShop widget...");
                 var html = await httpClient.GetStringAsync(url);
 
                 var doc = new HtmlDocument();
                 doc.LoadHtml(html);
 
-                // Find all free game entries
-                var gameNodes = doc.DocumentNode.SelectNodes("//div[contains(@class, 'free-game')] | //article[contains(@class, 'game')] | //div[contains(@class, 'game-item')]");
-
-                if (gameNodes == null)
+                // Parse splide__slide entries - each is a free game
+                var slides = doc.DocumentNode.SelectNodes("//div[contains(@class, 'splide__slide')]");
+                if (slides == null || slides.Count == 0)
                 {
-                    // Try alternative selectors
-                    gameNodes = doc.DocumentNode.SelectNodes("//a[contains(@href, '/blog/buy-')]");
+                    logger.Warn("No game slides found in AllKeyShop widget");
+                    return freeGames;
                 }
 
-                if (gameNodes != null)
+                foreach (var slide in slides)
                 {
-                    foreach (var node in gameNodes)
+                    try
                     {
-                        try
-                        {
-                            var gameName = ExtractGameName(node);
-                            var gameUrl = ExtractGameUrl(node);
+                        // Get platform/drm from data attributes
+                        var console = slide.GetAttributeValue("data-console", "");
+                        var drm = slide.GetAttributeValue("data-drm", "");
 
-                            if (!string.IsNullOrEmpty(gameName))
-                            {
-                                freeGames.Add(new FreeGame
-                                {
-                                    GameName = gameName,
-                                    Platform = platform,
-                                    Url = gameUrl,
-                                    DateFound = DateTime.Now
-                                });
-                            }
-                        }
-                        catch (Exception ex)
+                        // Get the link URL
+                        var link = slide.SelectSingleNode(".//a[contains(@class, 'splide__slide__container')]");
+                        var gameUrl = link?.GetAttributeValue("href", "") ?? "";
+
+                        // Get the game title from the cover image alt attribute
+                        var coverImg = slide.SelectSingleNode(".//img[contains(@class, 'game-cover')]");
+                        var title = HtmlEntity.DeEntitize(coverImg?.GetAttributeValue("alt", "") ?? "");
+
+                        // Get the free game type (Free to keep, Free DLC, Free with Prime, Gamepass, etc.)
+                        var typeSpan = slide.SelectSingleNode(".//span[contains(@class, 'free-game-type')]");
+                        var freeType = typeSpan?.InnerText?.Trim() ?? "Free";
+
+                        if (string.IsNullOrEmpty(title) || string.IsNullOrEmpty(gameUrl))
+                            continue;
+
+                        // Build a platform label: combine DRM and console info
+                        var platformLabel = !string.IsNullOrEmpty(drm) && drm != "none"
+                            ? $"{char.ToUpper(drm[0])}{drm.Substring(1)}"
+                            : !string.IsNullOrEmpty(console)
+                                ? $"{char.ToUpper(console[0])}{console.Substring(1)}"
+                                : "PC";
+
+                        freeGames.Add(new FreeGame
                         {
-                            logger.Error(ex, $"Error parsing free game node: {ex.Message}");
-                        }
+                            GameName = title,
+                            Platform = $"{platformLabel} - {freeType}",
+                            Url = gameUrl,
+                            DateFound = DateTime.Now
+                        });
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.Debug($"Error parsing game slide: {ex.Message}");
                     }
                 }
+
+                logger.Info($"Found {freeGames.Count} free games from widget");
             }
             catch (Exception ex)
             {
-                logger.Error(ex, $"Error scraping free games for {platform}: {ex.Message}");
+                logger.Error(ex, "Error scraping AllKeyShop free games widget");
             }
 
             return freeGames;
+        }
+
+        public async Task<List<FreeGame>> GetFreeGames(string platform)
+        {
+            // Legacy method - now just delegates to GetDailyGameDeals
+            return await GetDailyGameDeals();
         }
 
         private string MapPlatformToUrl(string platform)
@@ -279,59 +522,6 @@ namespace AllKeyShopExtension.Services
             };
 
             return platformMap.ContainsKey(platform) ? platformMap[platform] : platform.ToLowerInvariant();
-        }
-
-        private string ExtractGameName(HtmlNode node)
-        {
-            // Try various selectors for game name
-            var nameNode = node.SelectSingleNode(".//h2 | .//h3 | .//a[contains(@class, 'title')] | .//span[contains(@class, 'title')]");
-            if (nameNode != null)
-            {
-                return nameNode.InnerText.Trim();
-            }
-
-            // Fallback to link text
-            var linkNode = node.SelectSingleNode(".//a");
-            if (linkNode != null)
-            {
-                return linkNode.InnerText.Trim();
-            }
-
-            return node.InnerText.Trim();
-        }
-
-        private string ExtractGameUrl(HtmlNode node)
-        {
-            var linkNode = node.SelectSingleNode(".//a[@href]");
-            if (linkNode != null)
-            {
-                var url = linkNode.GetAttributeValue("href", "");
-                if (!url.StartsWith("http"))
-                {
-                    url = "https://www.allkeyshop.com" + url;
-                }
-                return url;
-            }
-            return null;
-        }
-
-        private decimal ExtractPrice(string priceText)
-        {
-            if (string.IsNullOrWhiteSpace(priceText))
-            {
-                return 0;
-            }
-
-            // Remove currency symbols and extract number
-            var cleaned = Regex.Replace(priceText, @"[^\d.,]", "");
-            cleaned = cleaned.Replace(",", ".");
-
-            if (decimal.TryParse(cleaned, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal price))
-            {
-                return price;
-            }
-
-            return 0;
         }
 
         public void ClearCache()
