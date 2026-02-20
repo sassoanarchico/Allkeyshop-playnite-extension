@@ -4,7 +4,7 @@
 
 **Playnite extension that monitors game prices from AllKeyShop**
 
-[![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Playnite%2010+-purple.svg)]()
 [![Framework](https://img.shields.io/badge/.NET-Framework%204.8-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
@@ -38,7 +38,7 @@ Monitor your game prices from AllKeyShop, get Windows notifications when a price
 | **Watchlist** | Add games to your personal list with integrated AllKeyShop search |
 | **Key + Account Prices** | Each game shows the best price for digital key and account |
 | **Fee-included Pricing** | Displayed price includes payment fees (LowestFeePrice) |
-| **Price Threshold** | Set a threshold per game: get alerted when the price drops below it |
+| **Dual Price Thresholds** | Set separate thresholds for Key and Account prices — each triggers independent alerts |
 | **Auto-refresh** | Prices update in the background at configurable intervals |
 | **Game Thumbnails** | Each game displays its cover art from AllKeyShop search |
 
@@ -47,7 +47,7 @@ Monitor your game prices from AllKeyShop, get Windows notifications when a price
 |---------|-------------|
 | **Windows Toast** | Native Windows 10/11 notifications (notification area + action center) |
 | **Playnite Notifications** | Alerts also appear in Playnite's built-in notification system |
-| **Price Alert** | When a price drops below the configured threshold |
+| **Price Alert** | When a key or account price drops below its respective threshold |
 | **Free Games** | When new free games are found on any platform |
 | **Price Update** | Notifications on price changes (toast only for price drops) |
 
@@ -81,7 +81,7 @@ Monitor your game prices from AllKeyShop, get Windows notifications when a price
 
 ### Quick Method (.pext file)
 
-1. Download `AllKeyShopExtension-1.0.0.pext` from the [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases) page
+1. Download `AllKeyShopExtension-1.1.0.pext` from the [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases) page
 2. In Playnite: **Menu > Extensions > Install extension from file**
 3. Select the downloaded `.pext` file
 4. **Restart Playnite**
@@ -110,7 +110,7 @@ Or copy the compiled folder to `%AppData%\Playnite\Extensions\AllKeyShopExtensio
 2. Click the **+ Add** button in the toolbar
 3. Search for the game name in the search window
 4. Select the correct result (with image preview and price)
-5. (Optional) Enter a **price threshold** in EUR
+5. (Optional) Enter a **Key threshold** and/or **Account threshold** in EUR
 6. Click **Add** — the price will be updated immediately
 
 ### Game Actions
@@ -122,7 +122,7 @@ Each card in the list has 5 action buttons:
 | 🌐 | **Open** | Opens the AllKeyShop page for the game in the browser |
 | 🛒 | **Buy** | Go directly to the best price offer |
 | ↻ | **Refresh** | Update the price for this specific game |
-| ✏ | **Edit threshold** | Opens the dialog to edit/remove the price threshold |
+| ✏ | **Edit thresholds** | Opens the dialog to edit/remove the Key and Account price thresholds |
 | 🗑 | **Remove** | Removes the game from the watchlist |
 
 ### Free Games
@@ -246,6 +246,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
 
 ### Latest versions
 
+- **v1.1.0** — Dual price thresholds (Key + Account), independent alerts, fixed unwanted account notifications
 - **v1.0.0** — Professional card-based UI, game thumbnails, MDL2 icons, timer fix, broken icons fix
 - **v0.2.4** — Edit price threshold, Windows Toast notifications
 - **v0.2.3** — Fix non-working price notifications

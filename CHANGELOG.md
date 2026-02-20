@@ -5,6 +5,22 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.1.0] - 2026-02-20
+
+### Added
+- **Dual price thresholds**: Separate threshold for Key price and Account price. Each can be set independently or left empty (no notification).
+- **Independent price alerts**: Key alerts (🔑) and Account alerts (👤) fire independently with dedicated notification IDs and messages.
+- **Dual threshold edit dialog**: The "Edit threshold" dialog now shows two input fields (Key + Account) with current values. "Remove all" clears both.
+- **Dual threshold on add**: The search window now has two threshold fields ("Key threshold" and "Account threshold") when adding a game.
+
+### Fixed
+- **Account price triggering key notifications**: Previously, a single threshold was shared between key and account prices, causing unwanted notifications when only the account price dropped. Now each price type is checked against its own threshold only.
+
+### Changed
+- **Database migration**: Added `KeyPriceThreshold` and `AccountPriceThreshold` columns. Existing single thresholds are auto-migrated to `KeyPriceThreshold`.
+- **Threshold display**: Cards now show "K:15.00€ | A:20.00€" format, or just one, or "—" if none set.
+- **NotificationService**: Rewritten to send separate notifications per threshold type instead of a single combined alert.
+
 ## [1.0.0] - 2026-02-20
 
 ### Added
