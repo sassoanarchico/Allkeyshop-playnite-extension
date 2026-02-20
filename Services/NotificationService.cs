@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using AllKeyShopExtension.Models;
+using Microsoft.Toolkit.Uwp.Notifications;
 using Playnite.SDK;
 using Playnite.SDK.Plugins;
 
@@ -18,6 +19,32 @@ namespace AllKeyShopExtension.Services
         {
             playniteAPI = api;
             settings = extensionSettings;
+        }
+
+        /// <summary>
+        /// Sends a Windows toast notification (appears in Windows notification center).
+        /// Falls back silently if toast notifications are unsupported.
+        /// </summary>
+        private void SendWindowsToast(string title, string body, string url = null)
+        {
+            try
+            {
+                var builder = new ToastContentBuilder()
+                    .AddText(title)
+                    .AddText(body);
+
+                if (!string.IsNullOrEmpty(url))
+                {
+                    builder.AddArgument("url", url);
+                }
+
+                builder.Show();
+                logger.Debug($"Windows toast sent: {title}");
+            }
+            catch (Exception ex)
+            {
+                logger.Warn($"Failed to send Windows toast notification: {ex.Message}");
+            }
         }
 
         public void NotifyNewFreeGames(List<FreeGame> newGames)
@@ -42,18 +69,29 @@ namespace AllKeyShopExtension.Services
 
                     logger.Info($"Sending free games notification: {text}");
 
+                    var firstUrl = games.FirstOrDefault(g => !string.IsNullOrEmpty(g.Url))?.Url;
+
+                    // Playnite notification
                     playniteAPI.Notifications.Add(new NotificationMessage(
                         $"allkeyshop-free-{platform}",
                         text,
                         NotificationType.Info,
                         () =>
                         {
-                            if (games.Count > 0 && !string.IsNullOrEmpty(games[0].Url))
+                            if (!string.IsNullOrEmpty(firstUrl))
                             {
-                                System.Diagnostics.Process.Start(games[0].Url);
+                                System.Diagnostics.Process.Start(firstUrl);
                             }
                         }
                     ));
+
+                    // Windows toast
+                    SendWindowsToast(
+                        $"Giochi Gratis su {platform}!",
+                        string.Join(", ", games.Take(3).Select(g => g.GameName)) +
+                            (games.Count > 3 ? $" (+{games.Count - 3} altri)" : ""),
+                        firstUrl
+                    );
                 }
             }
             catch (Exception ex)
@@ -98,6 +136,7 @@ namespace AllKeyShopExtension.Services
                 var text = $"💰 {game.GameName} - Prezzo sceso a {bestPrice.Value:0.00}€" +
                            (bestSeller != null ? $" ({bestSeller})" : "") +
                            $" | Soglia: {game.PriceThreshold.Value:0.00}€";
+                var sellerText = bestSeller != null ? $" ({bestSeller})" : "";
 
                 // Use stable ID per game to avoid duplicate notifications
                 var notificationId = $"allkeyshop-price-alert-{game.Id}";
@@ -108,6 +147,7 @@ namespace AllKeyShopExtension.Services
                         : !string.IsNullOrEmpty(game.AllKeyShopPageUrl) ? game.AllKeyShopPageUrl
                         : null;
 
+                // Playnite notification
                 playniteAPI.Notifications.Add(new NotificationMessage(
                     notificationId,
                     text,
@@ -120,6 +160,13 @@ namespace AllKeyShopExtension.Services
                         }
                     }
                 ));
+
+                // Windows toast notification
+                SendWindowsToast(
+                    $"Alert Prezzo: {game.GameName}",
+                    $"Prezzo: {bestPrice.Value:0.00}€{sellerText} (Soglia: {game.PriceThreshold.Value:0.00}€)",
+                    url
+                );
             }
             catch (Exception ex)
             {
@@ -144,6 +191,7 @@ namespace AllKeyShopExtension.Services
 
                 logger.Info($"Sending price update notification: {text}");
 
+                // Playnite notification
                 playniteAPI.Notifications.Add(new NotificationMessage(
                     $"allkeyshop-price-update-{game.Id}",
                     text,
@@ -156,6 +204,15 @@ namespace AllKeyShopExtension.Services
                         }
                     }
                 ));
+
+                // Windows toast for price drops only (not increases)
+                if (priceChange < 0)
+                {
+                    SendWindowsToast(
+                        $"Prezzo aggiornato: {game.GameName}",
+                        $"Prezzo sceso di {changeText}. Nuovo prezzo: {game.LastPrice.Value:0.00}€"
+                    );
+                }
             }
             catch (Exception ex)
             {
@@ -185,7 +242,7 @@ namespace AllKeyShopExtension.Services
         {
             playniteAPI.Notifications.Add(new NotificationMessage(
                 Guid.NewGuid().ToString(),
-                title,
+                $"{title}: {message}",
                 NotificationType.Info
             ));
         }
@@ -194,7 +251,7 @@ namespace AllKeyShopExtension.Services
         {
             playniteAPI.Notifications.Add(new NotificationMessage(
                 Guid.NewGuid().ToString(),
-                title,
+                $"{title}: {message}",
                 NotificationType.Error
             ));
         }

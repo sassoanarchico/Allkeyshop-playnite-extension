@@ -77,6 +77,17 @@ namespace AllKeyShopExtension.Services
             database.DeleteWatchedGame(id);
         }
 
+        public void UpdateThreshold(int gameId, decimal? newThreshold)
+        {
+            var game = database.GetWatchedGame(gameId);
+            if (game != null)
+            {
+                game.PriceThreshold = newThreshold;
+                database.UpdateWatchedGame(game);
+                logger.Info($"Updated threshold for '{game.GameName}' to {newThreshold}");
+            }
+        }
+
         public async Task<bool> UpdateGamePrice(int watchedGameId)
         {
             var watchedGame = database.GetWatchedGame(watchedGameId);

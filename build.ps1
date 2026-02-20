@@ -97,7 +97,8 @@ try {
         "AllKeyShopExtension.dll",
         "HtmlAgilityPack.dll",
         "Newtonsoft.Json.dll",
-        "System.Data.SQLite.dll"
+        "System.Data.SQLite.dll",
+        "Microsoft.Toolkit.Uwp.Notifications.dll"
     )
 
     $foundDlls = 0

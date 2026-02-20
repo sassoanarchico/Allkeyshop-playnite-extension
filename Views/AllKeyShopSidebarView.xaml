@@ -117,7 +117,7 @@
                 <DataGridTextColumn Header="Aggiornato" 
                                   Binding="{Binding LastUpdate, StringFormat={}{0:g}}" 
                                   Width="140"/>
-                <DataGridTemplateColumn Header="Azioni" Width="Auto" MinWidth="140">
+                <DataGridTemplateColumn Header="Azioni" Width="Auto" MinWidth="170">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
                             <StackPanel Orientation="Horizontal">
@@ -136,6 +136,11 @@
                                        Tag="{Binding}"
                                        Padding="4,1" Margin="1,0" FontSize="11"
                                        ToolTip="Aggiorna prezzo"/>
+                                <Button Content="✏" 
+                                       Click="EditThresholdButton_Click"
+                                       Tag="{Binding}"
+                                       Padding="4,1" Margin="1,0" FontSize="11"
+                                       ToolTip="Modifica soglia prezzo"/>
                                 <Button Content="X" 
                                        Click="RemoveButton_Click"
                                        Tag="{Binding Id}"

@@ -5,6 +5,15 @@ Tutte le modifiche notevoli a questo progetto saranno documentate in questo file
 Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.0.0/),
 e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
 
+## [0.2.4] - 2025-07-24
+
+### Aggiunto
+- **Modifica soglia prezzo**: Aggiunto pulsante ✏ (modifica) nella colonna Azioni della tabella giochi monitorati. Cliccando si apre una finestra di dialogo per modificare la soglia di prezzo di un gioco. Supporta salvataggio, cancellazione soglia ("Cancella") e annullamento.
+- **Notifiche Windows toast**: Le notifiche di alert prezzo, giochi gratis e aggiornamento prezzi ora appaiono anche come notifiche di sistema Windows (toast notification), oltre che all'interno di Playnite. Usa il pacchetto `Microsoft.Toolkit.Uwp.Notifications`. Le toast per aggiornamento prezzo vengono inviate solo per ribassi.
+
+### Corretto
+- `ShowInfo` e `ShowError` ora includono sia il titolo che il messaggio nel testo della notifica.
+
 ## [0.2.3] - 2025-02-20
 
 ### Corretto

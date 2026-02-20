@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -297,6 +298,111 @@ namespace AllKeyShopExtension.Views
             {
                 logger.Error(ex, "Error updating single game");
                 StatusText.Text = "Errore aggiornamento.";
+            }
+        }
+
+        private void EditThresholdButton_Click(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                if (sender is Button btn && btn.Tag is WatchedGame game)
+                {
+                    // Build a small WPF dialog for editing the threshold
+                    var dialog = new Window
+                    {
+                        Title = $"Modifica Soglia - {game.GameName}",
+                        Width = 400,
+                        Height = 200,
+                        WindowStartupLocation = WindowStartupLocation.CenterScreen,
+                        ResizeMode = ResizeMode.NoResize,
+                        Background = System.Windows.Media.Brushes.DimGray,
+                        Foreground = System.Windows.Media.Brushes.White
+                    };
+
+                    var stack = new StackPanel { Margin = new Thickness(20) };
+
+                    var label = new TextBlock
+                    {
+                        Text = $"Soglia prezzo per \"{game.GameName}\":",
+                        FontSize = 13,
+                        Foreground = System.Windows.Media.Brushes.White,
+                        Margin = new Thickness(0, 0, 0, 8)
+                    };
+                    stack.Children.Add(label);
+
+                    var currentLabel = new TextBlock
+                    {
+                        Text = game.PriceThreshold.HasValue
+                            ? $"Soglia attuale: {game.PriceThreshold.Value:0.00}€"
+                            : "Nessuna soglia impostata",
+                        FontSize = 11,
+                        Foreground = System.Windows.Media.Brushes.LightGray,
+                        Margin = new Thickness(0, 0, 0, 8)
+                    };
+                    stack.Children.Add(currentLabel);
+
+                    var textBox = new TextBox
+                    {
+                        Text = game.PriceThreshold.HasValue ? game.PriceThreshold.Value.ToString("0.00") : "",
+                        FontSize = 14,
+                        Padding = new Thickness(8, 6, 8, 6),
+                        Margin = new Thickness(0, 0, 0, 12)
+                    };
+                    stack.Children.Add(textBox);
+
+                    var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
+                    var saveBtn = new Button { Content = "Salva", Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var clearBtn = new Button { Content = "Rimuovi soglia", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var cancelBtn = new Button { Content = "Annulla", Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
+
+                    decimal? newThreshold = game.PriceThreshold;
+                    bool saved = false;
+
+                    saveBtn.Click += (s2, e2) =>
+                    {
+                        var txt = textBox.Text.Trim().Replace(",", ".");
+                        if (decimal.TryParse(txt, NumberStyles.Any, CultureInfo.InvariantCulture, out decimal val) && val > 0)
+                        {
+                            newThreshold = val;
+                            saved = true;
+                            dialog.Close();
+                        }
+                        else
+                        {
+                            MessageBox.Show("Inserisci un prezzo valido (es. 15.50)", "Valore non valido",
+                                MessageBoxButton.OK, MessageBoxImage.Warning);
+                        }
+                    };
+
+                    clearBtn.Click += (s2, e2) =>
+                    {
+                        newThreshold = null;
+                        saved = true;
+                        dialog.Close();
+                    };
+
+                    btnPanel.Children.Add(saveBtn);
+                    btnPanel.Children.Add(clearBtn);
+                    btnPanel.Children.Add(cancelBtn);
+                    stack.Children.Add(btnPanel);
+
+                    dialog.Content = stack;
+                    dialog.ShowDialog();
+
+                    if (saved)
+                    {
+                        priceService.UpdateThreshold(game.Id, newThreshold);
+                        LoadGames();
+                        StatusText.Text = newThreshold.HasValue
+                            ? $"Soglia per '{game.GameName}' aggiornata a {newThreshold.Value:0.00}€"
+                            : $"Soglia per '{game.GameName}' rimossa";
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Error editing threshold");
+                StatusText.Text = "Errore nella modifica della soglia.";
             }
         }
 

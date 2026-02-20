@@ -25,3 +25,5 @@ C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKey
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\GeneratedInternalTypeHelper.g.cs
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\AllKeyShopExtension_MarkupCompile.lref
 C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\obj\Release\Views\SearchGameWindow.baml
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\bin\Release\Microsoft.Toolkit.Uwp.Notifications.dll
+C:\Users\paffe\OneDrive\Documenten\PLAYNITE EXTENSION\allkeyshop-playnite\AllKeyShopExtension\bin\Release\System.ValueTuple.dll
