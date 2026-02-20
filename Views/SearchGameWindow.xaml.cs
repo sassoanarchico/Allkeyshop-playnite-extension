@@ -84,7 +84,7 @@ namespace AllKeyShopExtension.Views
             {
                 LoadingOverlay.Visibility = Visibility.Visible;
                 SearchButton.IsEnabled = false;
-                StatusText.Text = $"Ricerca di '{query}'...";
+                StatusText.Text = $"Searching for '{query}'...";
                 searchResults.Clear();
                 ConfirmButton.IsEnabled = false;
 
@@ -96,13 +96,13 @@ namespace AllKeyShopExtension.Views
                 }
 
                 StatusText.Text = results.Count > 0
-                    ? $"Trovati {results.Count} risultati. Seleziona il gioco corretto."
-                    : "Nessun risultato trovato. Prova con un altro nome.";
+                    ? $"Found {results.Count} results. Select the correct game."
+                    : "No results found. Try a different name.";
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error searching for '{query}'");
-                StatusText.Text = $"Errore nella ricerca: {ex.Message}";
+                StatusText.Text = $"Search error: {ex.Message}";
             }
             finally
             {

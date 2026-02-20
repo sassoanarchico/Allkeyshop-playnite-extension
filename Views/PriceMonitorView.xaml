@@ -19,11 +19,11 @@
                           FontSize="16" 
                           FontWeight="Bold" 
                           VerticalAlignment="Center"/>
-                <Button Content="Aggiungi Gioco" 
+                <Button Content="Add Game" 
                        Margin="10,0,0,0" 
                        Click="AddGameButton_Click"
                        Padding="10,5"/>
-                <Button Content="Aggiorna" 
+                <Button Content="Refresh" 
                        Margin="5,0,0,0" 
                        Click="RefreshButton_Click"
                        Padding="10,5"/>
@@ -43,22 +43,22 @@
                  GridLinesVisibility="All"
                  HeadersVisibility="Column">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Gioco" 
+                <DataGridTextColumn Header="Game" 
                                   Binding="{Binding GameName}" 
                                   Width="*"/>
-                <DataGridTextColumn Header="Prezzo" 
+                <DataGridTextColumn Header="Price" 
                                   Binding="{Binding LastPrice, StringFormat={}{0:C}}" 
                                   Width="120"/>
-                <DataGridTextColumn Header="Venditore" 
+                <DataGridTextColumn Header="Seller" 
                                   Binding="{Binding LastSeller}" 
                                   Width="150"/>
-                <DataGridTextColumn Header="Ultimo Aggiornamento" 
+                <DataGridTextColumn Header="Last Update" 
                                   Binding="{Binding LastUpdate, StringFormat={}{0:g}}" 
                                   Width="180"/>
-                <DataGridTemplateColumn Header="Azioni" Width="100">
+                <DataGridTemplateColumn Header="Actions" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Rimuovi" 
+                            <Button Content="Remove" 
                                    Click="RemoveButton_Click"
                                    Tag="{Binding Id}"
                                    Padding="5,2"/>
@@ -75,7 +75,7 @@
                Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" 
                        VerticalAlignment="Center">
-                <TextBlock Text="Caricamento..." 
+                <TextBlock Text="Loading..." 
                           FontSize="14"
                           Margin="0,0,0,10"/>
                 <ProgressBar IsIndeterminate="True" 
@@ -90,12 +90,12 @@
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center"
                    Visibility="Collapsed">
-            <TextBlock Text="Nessun gioco monitorato" 
+            <TextBlock Text="No games monitored" 
                       FontSize="14" 
                       Opacity="0.6"
                       HorizontalAlignment="Center"
                       Margin="0,0,0,10"/>
-            <TextBlock Text="Clicca su 'Aggiungi Gioco' per iniziare a monitorare i prezzi" 
+            <TextBlock Text="Click 'Add Game' to start monitoring prices" 
                       FontSize="12" 
                       Opacity="0.5"
                       HorizontalAlignment="Center"/>

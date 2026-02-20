@@ -1,220 +1,220 @@
 # Changelog
 
-Tutte le modifiche notevoli a questo progetto saranno documentate in questo file.
+All notable changes to this project will be documented in this file.
 
-Il formato è basato su [Keep a Changelog](https://keepachangelog.com/it/1.0.0/),
-e questo progetto aderisce a [Semantic Versioning](https://semver.org/lang/it/).
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/).
 
 ## [1.0.0] - 2026-02-20
 
-### Aggiunto
-- **Icone gioco nella lista monitorati**: Ogni gioco aggiunto mostra la thumbnail dalla ricerca AllKeyShop. Placeholder con icona controller per giochi senza immagine.
-- **Proprietà `ThresholdDisplay`**: Mostra la soglia formattata (es. "15.00\u20ac") o "\u2014" se non impostata.
-- **Conteggio giochi gratis**: L'expander mostra il numero di giochi gratis trovati.
+### Added
+- **Game icons in monitored list**: Each added game displays a thumbnail from AllKeyShop search. Placeholder with controller icon for games without an image.
+- **`ThresholdDisplay` property**: Shows the formatted threshold (e.g. "15.00€") or "—" if not set.
+- **Free games count**: The expander shows the number of free games found.
 
-### Corretto
-- **Icone pulsanti rotte**: Tutti i pulsanti toolbar e azioni ora usano `FontFamily="Segoe MDL2 Assets"` esplicito per le icone. Risolto il problema dei quadrati vuoti al posto delle icone.
-- **Timer non si avviava mai**: Rimossa condizione guard errata in Plugin.cs che impediva l'avvio dei timer di aggiornamento automatico.
-- **Database**: Aggiunta colonna `ImageUrl` con migrazione automatica.
+### Fixed
+- **Broken button icons**: All toolbar and action buttons now use explicit `FontFamily="Segoe MDL2 Assets"` for icons. Resolved the issue of empty squares instead of icons.
+- **Timer never started**: Removed erroneous guard condition in Plugin.cs that prevented auto-update timers from starting.
+- **Database**: Added `ImageUrl` column with automatic migration.
 
-### Modificato
-- **UI professionale completa**: Riscrittura completa della sidebar con layout a schede (card-based). Ogni gioco \u00e8 visualizzato come una card con thumbnail, nome, prezzi key/account, soglia, data aggiornamento e pulsanti azione con icone MDL2.
-- **Toolbar moderna**: Pulsanti con icone Segoe MDL2 Assets + testo, layout DockPanel con status text.
-- **Sezione giochi gratis**: Convertita da DataGrid a ItemsControl con card compatte.
-- **Stato vuoto migliorato**: Icona controller grande + testo invitante.
-- **Loading overlay**: Icona sync + barra progresso sottile.
-- **Status bar pulita**: Separatore con middle dot, font ridotto.
+### Changed
+- **Complete professional UI**: Full rewrite of the sidebar with card-based layout. Each game is displayed as a card with thumbnail, name, key/account prices, threshold, update date, and action buttons with MDL2 icons.
+- **Modern toolbar**: Buttons with Segoe MDL2 Assets icons + text, DockPanel layout with status text.
+- **Free games section**: Converted from DataGrid to ItemsControl with compact cards.
+- **Improved empty state**: Large controller icon + inviting text.
+- **Loading overlay**: Sync icon + thin progress bar.
+- **Clean status bar**: Separator with middle dot, reduced font.
 
 ## [0.2.4] - 2025-07-24
 
-### Aggiunto
-- **Modifica soglia prezzo**: Aggiunto pulsante ✏ (modifica) nella colonna Azioni della tabella giochi monitorati. Cliccando si apre una finestra di dialogo per modificare la soglia di prezzo di un gioco. Supporta salvataggio, cancellazione soglia ("Cancella") e annullamento.
-- **Notifiche Windows toast**: Le notifiche di alert prezzo, giochi gratis e aggiornamento prezzi ora appaiono anche come notifiche di sistema Windows (toast notification), oltre che all'interno di Playnite. Usa il pacchetto `Microsoft.Toolkit.Uwp.Notifications`. Le toast per aggiornamento prezzo vengono inviate solo per ribassi.
+### Added
+- **Edit price threshold**: Added ✏ (edit) button in the Actions column of the monitored games table. Clicking opens a dialog to edit the price threshold of a game. Supports save, clear threshold ("Clear"), and cancel.
+- **Windows toast notifications**: Price alerts, free games, and price update notifications now also appear as Windows system notifications (toast), in addition to Playnite. Uses the `Microsoft.Toolkit.Uwp.Notifications` package. Price update toasts are sent only for price drops.
 
-### Corretto
-- `ShowInfo` e `ShowError` ora includono sia il titolo che il messaggio nel testo della notifica.
+### Fixed
+- `ShowInfo` and `ShowError` now include both the title and message in the notification text.
 
 ## [0.2.3] - 2025-02-20
 
-### Corretto
-- **Notifiche prezzo non funzionanti**: Le notifiche di alert prezzo ora vengono inviate correttamente quando il prezzo scende sotto la soglia configurata.
-  - Il metodo `UpdatePrices()` nel plugin ora chiama `CheckPriceAlert()` dopo ogni aggiornamento prezzi e invia automaticamente le notifiche.
-  - `PriceAlertsEnabled` ora è abilitato di default (`true` invece di `false`).
-  - `NotifyPriceAlert()` riscritta: include il prezzo corrente, il venditore e la soglia nel testo della notifica (es. "💰 Cyberpunk 2077 - Prezzo sceso a 8.41€ (K4G) | Soglia: 10.00€").
-  - Usa ID stabili per notifica (`allkeyshop-price-alert-{id}`) per evitare duplicati.
-  - Click sulla notifica apre la pagina di acquisto.
-- **Notifiche giochi gratis**: Il messaggio include ora la lista completa dei giochi trovati.
-- **Notifiche aggiornamento prezzo**: Formato prezzo corretto (€ invece di `ToString("C")` che poteva usare altre valute).
+### Fixed
+- **Price notifications not working**: Price alert notifications are now sent correctly when the price drops below the configured threshold.
+  - The `UpdatePrices()` method in the plugin now calls `CheckPriceAlert()` after each price update and sends notifications automatically.
+  - `PriceAlertsEnabled` is now enabled by default (`true` instead of `false`).
+  - `NotifyPriceAlert()` rewritten: includes the current price, seller, and threshold in the notification text (e.g. "💰 Cyberpunk 2077 - Price dropped to 8.41€ (K4G) | Threshold: 10.00€").
+  - Uses stable notification IDs (`allkeyshop-price-alert-{id}`) to avoid duplicates.
+  - Clicking the notification opens the purchase page.
+- **Free games notifications**: The message now includes the complete list of found games.
+- **Price update notifications**: Correct price format (€ instead of `ToString("C")` which could use other currencies).
 
-### Aggiunto
-- Alert prezzo anche dalla sidebar: il pulsante "Aggiorna Prezzi" e "Agg." (aggiorna singolo) ora verificano le soglie e inviano notifiche istantanee.
-- Logging dettagliato per ogni notifica inviata (`logger.Info`).
+### Added
+- Price alerts from sidebar: the "Refresh Prices" and "Refresh" (single) buttons now check thresholds and send instant notifications.
+- Detailed logging for each notification sent (`logger.Info`).
 
 ## [0.2.2] - 2025-02-20
 
-### Corretto
-- **Tema e colori**: Riscrittura completa del sistema di stili per compatibilità ottimale con tutti i temi Playnite (scuro e chiaro).
-  - Rimossi tutti i background espliciti dai DataGrid (`ControlBackgroundBrush`, `WindowBackgroundBrush`) che causavano conflitti con i temi. Ora usano `Background="Transparent"` per ereditare correttamente dallo sfondo del tema.
-  - Aggiunti stili impliciti in `UserControl.Resources` per `DataGridRow`, `DataGridCell` e `DataGridColumnHeader` con trigger per hover e selezione che mantengono `TextBrush` come colore del testo in ogni stato.
-  - Usati overlay semi-trasparenti neutri (`#18808080`, `#28808080`) per hover e selezione che funzionano sia su sfondo scuro che chiaro.
-  - Aggiunto `Foreground="{DynamicResource TextBrush}"` sull'Expander per il testo dell'header.
-  - Aggiunti `ListBoxItem` styles con trigger nella finestra di ricerca per mantenere i colori corretti durante la selezione.
-  - Loading overlay ora con sfondo solido (`#CC000000`) e testo bianco esplicito, visibile su qualsiasi tema.
-- **Pulsante elimina non visibile**: La colonna Azioni ora usa `Width="Auto"` con `MinWidth="140"` e pulsanti compatti (`FontSize="11"`, `Padding="4,1"`). Aggiunto `ScrollViewer.HorizontalScrollBarVisibility="Auto"` al DataGrid per consentire lo scorrimento orizzontale. Rinominato "Aggiorna" in "Agg." per risparmiare spazio. Pulsante "X" evidenziato in rosso (`#FF6B68`).
-- **Giochi gratis (widget)**: Lo scraping dei giochi gratis ora usa il widget ufficiale AllKeyShop (`widget.allkeyshop.com`) invece della pagina blog `daily-game-deals`, recuperando correttamente tutti i giochi gratis disponibili (28+ titoli vs 6 articoli). Ogni gioco mostra piattaforma e tipo (es. "Steam - Free to keep", "Amazon - Free with Prime", "Xbox - Gamepass").
+### Fixed
+- **Theme and colors**: Complete rewrite of the style system for optimal compatibility with all Playnite themes (dark and light).
+  - Removed all explicit DataGrid backgrounds (`ControlBackgroundBrush`, `WindowBackgroundBrush`) that caused conflicts with themes. Now uses `Background="Transparent"` to correctly inherit from the theme background.
+  - Added implicit styles in `UserControl.Resources` for `DataGridRow`, `DataGridCell`, and `DataGridColumnHeader` with triggers for hover and selection that maintain `TextBrush` as the text color in every state.
+  - Used neutral semi-transparent overlays (`#18808080`, `#28808080`) for hover and selection that work on both dark and light backgrounds.
+  - Added `Foreground="{DynamicResource TextBrush}"` to the Expander for the header text.
+  - Added `ListBoxItem` styles with triggers in the search window to maintain correct colors during selection.
+  - Loading overlay now with solid background (`#CC000000`) and explicit white text, visible on any theme.
+- **Delete button not visible**: Actions column now uses `Width="Auto"` with `MinWidth="140"` and compact buttons (`FontSize="11"`, `Padding="4,1"`). Added `ScrollViewer.HorizontalScrollBarVisibility="Auto"` to the DataGrid for horizontal scrolling. Renamed "Aggiorna" to "Agg." to save space. Delete button highlighted in red (`#FF6B68`).
+- **Free games (widget)**: Free games scraping now uses the official AllKeyShop widget (`widget.allkeyshop.com`) instead of the blog page `daily-game-deals`, correctly retrieving all available free games (28+ titles vs 6 articles). Each game shows platform and type (e.g. "Steam - Free to keep", "Amazon - Free with Prime", "Xbox - Gamepass").
 
 ## [0.2.1] - 2025-07-10
 
-### Corretto
-- **Prezzi con commissioni**: Il prezzo mostrato ora include le commissioni di pagamento ("Lowest Fees"), calcolato come il minimo tra il prezzo con carta e il prezzo con PayPal. Aggiunta proprietà `LowestFeePrice` al modello `OfferInfo`.
-- **Giochi gratis**: L'elenco dei giochi gratis ora viene popolato correttamente dalla pagina [Daily Game Deals](https://www.allkeyshop.com/blog/daily-game-deals/) di AllKeyShop, mostrando offerte gratuite, deal e promozioni attive. Aggiunto metodo `GetDailyGameDeals()` e `CheckForDailyDeals()`.
-- **Tema/Font**: L'interfaccia si adatta correttamente al tema attivo di Playnite (scuro/chiaro). Risolto il problema di testo scuro su sfondo scuro. Tutti i componenti (DataGrid, ListBox, finestre) ora utilizzano le risorse tema di Playnite (`TextBrush`, `WindowBackgroundBrush`, `ControlBackgroundBrush`, `PopupBackgroundBrush`). Aggiunti stili per DataGrid ColumnHeader e Cell.
+### Fixed
+- **Fee-included pricing**: The displayed price now includes payment fees ("Lowest Fees"), calculated as the minimum between the card price and the PayPal price. Added `LowestFeePrice` property to the `OfferInfo` model.
+- **Free games**: The free games list is now correctly populated from AllKeyShop's [Daily Game Deals](https://www.allkeyshop.com/blog/daily-game-deals/) page, showing free offers, deals, and active promotions. Added `GetDailyGameDeals()` and `CheckForDailyDeals()` methods.
+- **Theme/Font**: The interface now correctly adapts to the active Playnite theme (dark/light). Fixed the issue of dark text on dark background. All components (DataGrid, ListBox, windows) now use Playnite theme resources (`TextBrush`, `WindowBackgroundBrush`, `ControlBackgroundBrush`, `PopupBackgroundBrush`). Added styles for DataGrid ColumnHeader and Cell.
 
 ## [0.2.0] - 2025-07-09
 
-### Aggiunto
-- **Nuovo motore di scraping**: Riscrittura completa dello scraping basata sul JSON `gamePageTrans` integrato nelle pagine AllKeyShop, garantendo dati strutturati e affidabili.
-- **Ricerca giochi**: Nuova finestra di ricerca (`SearchGameWindow`) che utilizza l'API di ricerca di AllKeyShop per trovare e aggiungere giochi da monitorare.
-- **Prezzi Key e Account separati**: Distinzione tra offerte di tipo "key" e "account" con prezzi separati nella tabella di monitoraggio.
-- **Migrazione database**: Aggiunta automatica delle nuove colonne (`KeyPrice`, `AccountPrice`, `BuyUrl`, `BestMerchant`, `IsAccountOffer`) al database SQLite esistente.
-- **Modello OfferInfo completo**: Nuova classe `OfferInfo` con supporto per voucher, edizioni, regioni, commissioni (card/PayPal) e URL di acquisto diretto.
+### Added
+- **New scraping engine**: Complete rewrite of scraping based on the `gamePageTrans` JSON embedded in AllKeyShop pages, ensuring structured and reliable data.
+- **Game search**: New search window (`SearchGameWindow`) that uses the AllKeyShop search API to find and add games to monitor.
+- **Separate Key and Account prices**: Distinction between "key" and "account" offer types with separate prices in the monitoring table.
+- **Database migration**: Automatic addition of new columns (`KeyPrice`, `AccountPrice`, `BuyUrl`, `BestMerchant`, `IsAccountOffer`) to the existing SQLite database.
+- **Complete OfferInfo model**: New `OfferInfo` class with support for vouchers, editions, regions, fees (card/PayPal), and direct purchase URL.
 
-### Modificato
-- Struttura dei modelli `GamePrice` e `WatchedGame` aggiornata con nuovi campi.
-- `PriceService` aggiornato per il nuovo flusso di scraping.
-- Vista sidebar aggiornata con colonne Key/Account/Migliore.
+### Changed
+- Updated `GamePrice` and `WatchedGame` model structures with new fields.
+- `PriceService` updated for the new scraping flow.
+- Sidebar view updated with Key/Account/Best columns.
 
 ## [0.1.2] - 2025-07-08
 
-### Corretto
-- **Errore di caricamento XAML**: Risolto `XamlParseException` causato da riferimenti errati a `SystemColors.WindowTextColorKey` nei template XAML.
-- **Vista sidebar**: Implementata la vista sidebar per il monitoraggio prezzi all'interno di Playnite.
+### Fixed
+- **XAML loading error**: Resolved `XamlParseException` caused by incorrect references to `SystemColors.WindowTextColorKey` in XAML templates.
+- **Sidebar view**: Implemented the sidebar view for price monitoring within Playnite.
 
 ## [0.1.1] - 2025-01-22
 
-### Corretto
-- **Scraping AllKeyShop**: Migliorati i selettori CSS per trovare correttamente prezzo e venditore
-  - Aggiunti selettori multipli per gestire diverse strutture HTML del sito
-  - Migliorata l'estrazione del prezzo per supportare vari formati (€12.99, 12,99€, $12.99, ecc.)
-  - Aggiunto logging dettagliato per il debug dello scraping
-- **Gestione LastUpdate**: Corretto il problema per cui la data di ultimo aggiornamento veniva mostrata anche quando il prezzo non era disponibile
-  - LastUpdate viene aggiornato solo quando il prezzo è effettivamente disponibile
-- **Grafica e Tema**: Rimossi tutti i colori hardcoded e adattata l'interfaccia al tema Playnite
-  - Uso di DynamicResource con SystemColors per adattarsi automaticamente al tema scuro/chiaro
-  - Stili per DataGrid e controlli che seguono la palette di colori del tema
-  - Tutte le viste (PriceMonitorView, PriceMonitorWindow, SettingsView) ora si adattano al tema
+### Fixed
+- **AllKeyShop scraping**: Improved CSS selectors to correctly find price and seller
+  - Added multiple selectors to handle different HTML structures of the site
+  - Improved price extraction to support various formats (€12.99, 12,99€, $12.99, etc.)
+  - Added detailed logging for scraping debug
+- **LastUpdate handling**: Fixed the issue where the last update date was shown even when the price was not available
+  - LastUpdate is now updated only when the price is actually available
+- **Graphics and Theme**: Removed all hardcoded colors and adapted the interface to the Playnite theme
+  - Use of DynamicResource with SystemColors to automatically adapt to dark/light theme
+  - Styles for DataGrid and controls that follow the theme's color palette
+  - All views (PriceMonitorView, PriceMonitorWindow, SettingsView) now adapt to the theme
 
-### Migliorato
-- **Scraping**: Aggiunti più selettori CSS per aumentare la probabilità di trovare i dati corretti
-- **Logging**: Aggiunto logging dettagliato per tracciare il processo di scraping
-- **Estrazione Prezzo**: Regex migliorata per estrarre prezzi da formati più vari
+### Improved
+- **Scraping**: Added more CSS selectors to increase the probability of finding correct data
+- **Logging**: Added detailed logging to trace the scraping process
+- **Price extraction**: Improved regex to extract prices from more varied formats
 
 ## [0.1.0] - 2024-12-19
 
-### Aggiunto
+### Added
 
-#### Funzionalità Principali
-- **Monitoraggio Prezzi**: Sistema completo per monitorare i prezzi dei giochi da AllKeyShop
-  - Aggiunta di giochi da monitorare tramite interfaccia utente
-  - Visualizzazione del prezzo più basso trovato su AllKeyShop
-  - Aggiornamento automatico dei prezzi a intervalli configurabili
-  - Click su un gioco per aprire direttamente la pagina AllKeyShop
-  - Rimozione di giochi dalla lista di monitoraggio
+#### Core Features
+- **Price Monitoring**: Complete system to monitor game prices from AllKeyShop
+  - Add games to monitor through the user interface
+  - Display of the lowest price found on AllKeyShop
+  - Automatic price updates at configurable intervals
+  - Click on a game to open the AllKeyShop page directly
+  - Remove games from the monitoring list
 
-- **Notifiche Giochi Gratis**: Sistema di notifiche per nuovi giochi gratis disponibili
-  - Controllo automatico dei giochi gratis per piattaforme selezionate
-  - Notifiche quando vengono trovati nuovi giochi gratis
-  - Configurazione delle piattaforme da monitorare (Steam, Epic, GOG, Xbox, PlayStation, Nintendo Switch, Origin, Uplay, Battle.net)
-  - Intervallo di controllo configurabile
+- **Free Games Notifications**: Notification system for new available free games
+  - Automatic check of free games for selected platforms
+  - Notifications when new free games are found
+  - Platform configuration (Steam, Epic, GOG, Xbox, PlayStation, Nintendo Switch, Origin, Uplay, Battle.net)
+  - Configurable check interval
 
-- **Interfaccia Utente**
-  - Vista principale (PriceMonitorView) con lista completa dei giochi monitorati
-  - Finestra separata per il monitoraggio prezzi (PriceMonitorWindow)
-  - Vista impostazioni completa con tutte le opzioni di configurazione
-  - Indicatori di caricamento durante le operazioni
-  - Stato vuoto quando non ci sono giochi monitorati
+- **User Interface**
+  - Main view (PriceMonitorView) with complete monitored games list
+  - Separate window for price monitoring (PriceMonitorWindow)
+  - Complete settings view with all configuration options
+  - Loading indicators during operations
+  - Empty state when no games are monitored
 
-#### Servizi e Logica Business
-- **AllKeyShopScraper**: Servizio di scraping per recuperare prezzi e giochi gratis
-  - Scraping HTML con HtmlAgilityPack
-  - Rate limiting per evitare ban
-  - Cache dei risultati per ottimizzare le richieste
-  - Gestione errori robusta
+#### Services and Business Logic
+- **AllKeyShopScraper**: Scraping service to retrieve prices and free games
+  - HTML scraping with HtmlAgilityPack
+  - Rate limiting to avoid bans
+  - Result caching to optimize requests
+  - Robust error handling
 
-- **PriceService**: Servizio per la gestione dei prezzi
-  - Aggiunta/rimozione giochi da monitorare
-  - Aggiornamento prezzi singoli o multipli
-  - Rilevamento giochi che necessitano aggiornamento
-  - Supporto per soglie di prezzo (preparato per future feature)
+- **PriceService**: Price management service
+  - Add/remove games to monitor
+  - Single or batch price updates
+  - Detection of games needing update
+  - Price threshold support (prepared for future feature)
 
-- **FreeGamesService**: Servizio per la gestione dei giochi gratis
-  - Controllo nuovi giochi gratis per piattaforma
-  - Confronto con storico per rilevare nuovi giochi
-  - Filtraggio per piattaforme abilitate
+- **FreeGamesService**: Free games management service
+  - Check for new free games per platform
+  - Compare with history to detect new games
+  - Filter by enabled platforms
 
-- **NotificationService**: Servizio per le notifiche Playnite
-  - Notifiche per nuovi giochi gratis
-  - Notifiche per alert prezzo (preparato per future feature)
-  - Notifiche per aggiornamenti prezzi
-  - Click sulle notifiche per aprire AllKeyShop
+- **NotificationService**: Playnite notification service
+  - New free games notifications
+  - Price alert notifications (prepared for future feature)
+  - Price update notifications
+  - Click on notifications to open AllKeyShop
 
-#### Persistenza Dati
-- **Database SQLite**: Sistema di persistenza locale
-  - Tabella `WatchedGames` per giochi monitorati
-  - Tabella `FreeGamesHistory` per storico giochi gratis
-  - Tabella `Settings` per impostazioni estensione
-  - Operazioni thread-safe
-  - Gestione automatica della creazione del database
+#### Data Persistence
+- **SQLite Database**: Local persistence system
+  - `WatchedGames` table for monitored games
+  - `FreeGamesHistory` table for free games history
+  - `Settings` table for extension settings
+  - Thread-safe operations
+  - Automatic database creation on first run
 
 #### Background Tasks
-- **Timer Aggiornamento Prezzi**: Aggiornamento automatico periodico
-  - Intervallo configurabile (default: 60 minuti)
-  - Aggiornamento asincrono per non bloccare l'UI
-  - Gestione errori con logging
+- **Price Update Timer**: Automatic periodic update
+  - Configurable interval (default: 60 minutes)
+  - Asynchronous update to avoid blocking the UI
+  - Error handling with logging
 
-- **Timer Controllo Giochi Gratis**: Controllo automatico periodico
-  - Intervallo configurabile (default: 120 minuti)
-  - Controllo solo per piattaforme abilitate
-  - Notifiche automatiche per nuovi giochi
+- **Free Games Check Timer**: Automatic periodic check
+  - Configurable interval (default: 120 minutes)
+  - Check only for enabled platforms
+  - Automatic notifications for new games
 
-#### Configurazione
-- **Impostazioni Estensione**:
-  - Abilita/disabilita notifiche
-  - Abilita/disabilita alert prezzo (preparato per future feature)
-  - Configurazione intervallo aggiornamento prezzi
-  - Configurazione intervallo controllo giochi gratis
-  - Selezione piattaforme per notifiche giochi gratis
-  - Salvataggio automatico delle impostazioni
+#### Configuration
+- **Extension Settings**:
+  - Enable/disable notifications
+  - Enable/disable price alerts (prepared for future feature)
+  - Configure price update interval
+  - Configure free games check interval
+  - Select platforms for free games notifications
+  - Automatic settings save
 
-#### Struttura Progetto
-- Architettura modulare con separazione delle responsabilità
-- Modelli dati ben definiti
-- Servizi riutilizzabili
-- Viste WPF responsive
-- Utilities per operazioni comuni (HttpClientHelper)
+#### Project Structure
+- Modular architecture with separation of concerns
+- Well-defined data models
+- Reusable services
+- Responsive WPF views
+- Utilities for common operations (HttpClientHelper)
 
-#### Documentazione
-- README.md completo con istruzioni di installazione e utilizzo
-- Codice commentato e ben strutturato
-- Gestione errori con logging dettagliato
+#### Documentation
+- Complete README.md with installation and usage instructions
+- Commented and well-structured code
+- Error handling with detailed logging
 
-### Note Tecniche
+### Technical Notes
 - Target Framework: .NET Framework 4.8
-- Dipendenze: HtmlAgilityPack, Newtonsoft.Json, System.Data.SQLite.Core
-- Compatibilità: Playnite 10.x o superiore
-- Thread-safe per operazioni concorrenti
-- Gestione errori robusta con try-catch appropriati
-- Rate limiting per evitare problemi con AllKeyShop
+- Dependencies: HtmlAgilityPack, Newtonsoft.Json, System.Data.SQLite.Core
+- Compatibility: Playnite 10.x or later
+- Thread-safe for concurrent operations
+- Robust error handling with appropriate try-catch
+- Rate limiting to avoid issues with AllKeyShop
 
-### Preparato per Future Feature
-- Sistema di alert per soglie prezzo (infrastruttura pronta)
-- Storico prezzi nel tempo
-- Supporto multi-valuta
-- Integrazione con wishlist Steam
-- Esportazione dati
+### Prepared for Future Features
+- Price threshold alert system (infrastructure ready)
+- Price history over time
+- Multi-currency support
+- Steam wishlist integration
+- Data export
 
-### Note
-- Lo scraping di AllKeyShop è soggetto alle politiche del sito
-- I selettori HTML potrebbero dover essere aggiornati se AllKeyShop cambia la struttura
-- Il database viene creato automaticamente alla prima esecuzione
-- Le notifiche utilizzano il sistema nativo di Playnite
+### Notes
+- AllKeyShop scraping is subject to the site's policies
+- HTML selectors may need updating if AllKeyShop changes its structure
+- The database is created automatically on first run
+- Notifications use Playnite's native notification system

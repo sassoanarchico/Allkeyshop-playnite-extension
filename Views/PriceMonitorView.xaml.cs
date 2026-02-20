@@ -53,7 +53,7 @@ namespace AllKeyShopExtension.Views
         {
             var dialog = new System.Windows.Forms.Form
             {
-                Text = "Aggiungi Gioco",
+                Text = "Add Game",
                 Width = 400,
                 Height = 150,
                 StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
@@ -61,7 +61,7 @@ namespace AllKeyShopExtension.Views
 
             var label = new System.Windows.Forms.Label
             {
-                Text = "Nome del gioco:",
+                Text = "Game name:",
                 Left = 10,
                 Top = 20,
                 Width = 100
@@ -76,7 +76,7 @@ namespace AllKeyShopExtension.Views
 
             var addButton = new System.Windows.Forms.Button
             {
-                Text = "Aggiungi",
+                Text = "Add",
                 Left = 120,
                 Top = 60,
                 Width = 100,
@@ -85,7 +85,7 @@ namespace AllKeyShopExtension.Views
 
             var cancelButton = new System.Windows.Forms.Button
             {
-                Text = "Annulla",
+                Text = "Cancel",
                 Left = 230,
                 Top = 60,
                 Width = 100,
@@ -114,13 +114,13 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Aggiunta gioco...";
+                StatusText.Text = "Adding game...";
 
                 var added = priceService.AddWatchedGame(gameName);
                 if (added)
                 {
                     LoadGames();
-                    StatusText.Text = $"Gioco '{gameName}' aggiunto. Aggiornamento prezzo...";
+                    StatusText.Text = $"Game '{gameName}' added. Updating price...";
                     
                     // Update price immediately
                     var game = priceService.GetWatchedGameByName(gameName);
@@ -128,20 +128,20 @@ namespace AllKeyShopExtension.Views
                     {
                         await priceService.UpdateGamePrice(game);
                         LoadGames();
-                        StatusText.Text = "Gioco aggiunto con successo!";
+                        StatusText.Text = "Game added successfully!";
                     }
                 }
                 else
                 {
-                    StatusText.Text = $"Il gioco '{gameName}' è già nella lista.";
-                    MessageBox.Show($"Il gioco '{gameName}' è già nella lista.", "Gioco già presente", MessageBoxButton.OK, MessageBoxImage.Information);
+                    StatusText.Text = $"The game '{gameName}' is already in the list.";
+                    MessageBox.Show($"The game '{gameName}' is already in the list.", "Game already exists", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error adding game: {ex.Message}");
-                StatusText.Text = "Errore durante l'aggiunta del gioco.";
-                MessageBox.Show($"Errore: {ex.Message}", "Errore", MessageBoxButton.OK, MessageBoxImage.Error);
+                StatusText.Text = "Error while adding the game.";
+                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -154,17 +154,17 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Aggiornamento prezzi...";
+                StatusText.Text = "Updating prices...";
 
                 await priceService.UpdateAllPrices();
                 LoadGames();
 
-                StatusText.Text = "Prezzi aggiornati!";
+                StatusText.Text = "Prices updated!";
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error refreshing prices: {ex.Message}");
-                StatusText.Text = "Errore durante l'aggiornamento.";
+                StatusText.Text = "Error while updating.";
             }
             finally
             {
@@ -180,8 +180,8 @@ namespace AllKeyShopExtension.Views
                 if (button?.Tag is int gameId)
                 {
                     var result = MessageBox.Show(
-                        "Sei sicuro di voler rimuovere questo gioco dalla lista?",
-                        "Conferma rimozione",
+                        "Are you sure you want to remove this game from the list?",
+                        "Confirm removal",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
@@ -189,7 +189,7 @@ namespace AllKeyShopExtension.Views
                     {
                         priceService.RemoveWatchedGame(gameId);
                         LoadGames();
-                        StatusText.Text = "Gioco rimosso.";
+                        StatusText.Text = "Game removed.";
                     }
                 }
             }

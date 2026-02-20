@@ -211,7 +211,7 @@ namespace AllKeyShopExtension
                     var errorControl = new UserControl();
                     errorControl.Content = new TextBlock 
                     { 
-                        Text = "Errore nel caricamento delle impostazioni. Controlla i log per dettagli.",
+                        Text = "Error loading settings. Check the logs for details.",
                         Margin = new Thickness(20),
                         TextWrapping = TextWrapping.Wrap
                     };
@@ -253,7 +253,7 @@ namespace AllKeyShopExtension
                             var errorControl = new UserControl();
                             errorControl.Content = new TextBlock
                             {
-                                Text = "Errore nel caricamento della sidebar AllKeyShop. Controlla i log.",
+                                Text = "Error loading the AllKeyShop sidebar. Check the logs.",
                                 Margin = new Thickness(20),
                                 TextWrapping = TextWrapping.Wrap
                             };

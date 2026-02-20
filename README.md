@@ -2,271 +2,271 @@
 
 # AllKeyShop Price Monitor
 
-**Estensione Playnite per il monitoraggio prezzi da AllKeyShop**
+**Playnite extension that monitors game prices from AllKeyShop**
 
 [![Version](https://img.shields.io/badge/version-1.0.0-blue.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Playnite%2010+-purple.svg)]()
 [![Framework](https://img.shields.io/badge/.NET-Framework%204.8-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
 
-Monitora i prezzi dei tuoi giochi da AllKeyShop, ricevi notifiche Windows quando un prezzo scende sotto la soglia che hai impostato, e scopri i giochi gratis disponibili — tutto direttamente dalla sidebar di Playnite.
+Monitor your game prices from AllKeyShop, get Windows notifications when a price drops below your threshold, and discover free games — all directly from the Playnite sidebar.
 
 </div>
 
 ---
 
-## Indice
+## Table of Contents
 
-- [Funzionalita](#funzionalita)
-- [Screenshot](#screenshot)
-- [Installazione](#installazione)
-- [Guida Rapida](#guida-rapida)
-- [Impostazioni](#impostazioni)
-- [Struttura Progetto](#struttura-progetto)
-- [Sviluppo](#sviluppo)
+- [Features](#features)
+- [Screenshots](#screenshots)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Settings](#settings)
+- [Project Structure](#project-structure)
+- [Development](#development)
 - [Roadmap](#roadmap)
 - [Changelog](#changelog)
-- [Licenza](#licenza)
+- [License](#license)
 
 ---
 
-## Funzionalita
+## Features
 
-### Monitoraggio Prezzi
-| Funzione | Descrizione |
-|----------|-------------|
-| **Watchlist** | Aggiungi giochi alla tua lista personale con ricerca integrata AllKeyShop |
-| **Prezzi Key + Account** | Ogni gioco mostra il miglior prezzo per chiave digitale e per account |
-| **Prezzo con commissioni** | Il prezzo mostrato include le commissioni di pagamento (LowestFeePrice) |
-| **Soglia prezzo** | Imposta una soglia per ogni gioco: ricevi un alert quando il prezzo scende |
-| **Aggiornamento automatico** | I prezzi si aggiornano in background a intervalli configurabili |
-| **Thumbnail gioco** | Ogni gioco mostra la copertina dalla ricerca AllKeyShop |
+### Price Monitoring
+| Feature | Description |
+|---------|-------------|
+| **Watchlist** | Add games to your personal list with integrated AllKeyShop search |
+| **Key + Account Prices** | Each game shows the best price for digital key and account |
+| **Fee-included Pricing** | Displayed price includes payment fees (LowestFeePrice) |
+| **Price Threshold** | Set a threshold per game: get alerted when the price drops below it |
+| **Auto-refresh** | Prices update in the background at configurable intervals |
+| **Game Thumbnails** | Each game displays its cover art from AllKeyShop search |
 
-### Notifiche
-| Funzione | Descrizione |
-|----------|-------------|
-| **Toast Windows** | Notifiche native Windows 10/11 (area notifiche + centro notifiche) |
-| **Notifiche Playnite** | Alert anche nel sistema notifiche integrato di Playnite |
-| **Alert prezzo** | Quando un prezzo scende sotto la soglia impostata |
-| **Giochi gratis** | Quando vengono trovati nuovi giochi gratis su qualsiasi piattaforma |
-| **Aggiornamento prezzo** | Notifica sulle variazioni di prezzo (solo ribassi per le toast) |
+### Notifications
+| Feature | Description |
+|---------|-------------|
+| **Windows Toast** | Native Windows 10/11 notifications (notification area + action center) |
+| **Playnite Notifications** | Alerts also appear in Playnite's built-in notification system |
+| **Price Alert** | When a price drops below the configured threshold |
+| **Free Games** | When new free games are found on any platform |
+| **Price Update** | Notifications on price changes (toast only for price drops) |
 
-### Giochi Gratis
-| Funzione | Descrizione |
-|----------|-------------|
-| **Widget AllKeyShop** | Scraping dal widget ufficiale AllKeyShop per massima copertura |
-| **Multi-piattaforma** | Steam, Epic, GOG, Xbox Game Pass, PlayStation, Amazon Prime, e altri |
-| **Tipo offerta** | Mostra il tipo (Free to Keep, Free with Prime, Gamepass, Free DLC, ecc.) |
-| **Storico** | Database locale per evitare notifiche duplicate |
+### Free Games
+| Feature | Description |
+|---------|-------------|
+| **AllKeyShop Widget** | Scrapes the official AllKeyShop widget for maximum coverage |
+| **Multi-platform** | Steam, Epic, GOG, Xbox Game Pass, PlayStation, Amazon Prime, and more |
+| **Offer Type** | Shows the type (Free to Keep, Free with Prime, Gamepass, Free DLC, etc.) |
+| **History** | Local database to avoid duplicate notifications |
 
-### Interfaccia
-| Funzione | Descrizione |
-|----------|-------------|
-| **Sidebar integrata** | App completa nella barra laterale di Playnite |
-| **Layout a card** | Ogni gioco e una card con thumbnail, prezzi, soglia e azioni |
-| **Icone Segoe MDL2** | Icone native Windows in toolbar e pulsanti azione |
-| **Tema adattivo** | Si adatta automaticamente a qualsiasi tema Playnite (scuro/chiaro) |
-| **Ricerca avanzata** | Finestra di ricerca con anteprima immagine, prezzo e piattaforma |
-
----
-
-## Screenshot
-
-> La sidebar principale mostra i giochi monitorati come card con thumbnail, prezzi e azioni rapide.
-> La sezione inferiore (espandibile) elenca i giochi gratis recenti.
+### Interface
+| Feature | Description |
+|---------|-------------|
+| **Integrated Sidebar** | Full app in Playnite's sidebar |
+| **Card Layout** | Each game is a card with thumbnail, prices, threshold, and actions |
+| **Segoe MDL2 Icons** | Native Windows icons in toolbar and action buttons |
+| **Adaptive Theme** | Automatically adapts to any Playnite theme (dark/light) |
+| **Advanced Search** | Search window with image preview, price, and platform |
 
 ---
 
-## Installazione
+## Screenshots
 
-### Metodo Rapido (file .pext)
+> The main sidebar shows monitored games as cards with thumbnails, prices, and quick actions.
+> The bottom section (expandable) lists recent free games.
 
-1. Scarica `AllKeyShopExtension-1.0.0.pext` dalla pagina [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases)
-2. In Playnite: **Menu > Estensioni > Installa estensione da file**
-3. Seleziona il file `.pext` scaricato
-4. **Riavvia Playnite**
-5. L icona AllKeyShop apparira nella barra laterale
+---
 
-### Installazione Manuale (sviluppatori)
+## Installation
+
+### Quick Method (.pext file)
+
+1. Download `AllKeyShopExtension-1.0.0.pext` from the [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases) page
+2. In Playnite: **Menu > Extensions > Install extension from file**
+3. Select the downloaded `.pext` file
+4. **Restart Playnite**
+5. The AllKeyShop icon will appear in the sidebar
+
+### Manual Installation (developers)
 
 ```powershell
-# Clona il repository
+# Clone the repository
 git clone https://github.com/sassoanarchico/allkeyshop-playnite.git
 cd allkeyshop-playnite/AllKeyShopExtension
 
-# Compila e pacchettizza
+# Build and package
 .\build.ps1
 ```
 
-Oppure copia la cartella compilata in `%AppData%\Playnite\Extensions\AllKeyShopExtension\`.
+Or copy the compiled folder to `%AppData%\Playnite\Extensions\AllKeyShopExtension\`.
 
 ---
 
-## Guida Rapida
+## Quick Start
 
-### Aggiungere un Gioco
+### Adding a Game
 
-1. Clicca l icona **AllKeyShop** nella sidebar di Playnite
-2. Clicca il pulsante **+ Aggiungi** nella toolbar
-3. Cerca il nome del gioco nella finestra di ricerca
-4. Seleziona il risultato corretto (con anteprima immagine e prezzo)
-5. (Opzionale) Inserisci una **soglia prezzo** in EUR
-6. Clicca **Aggiungi** — il prezzo verra aggiornato immediatamente
+1. Click the **AllKeyShop** icon in the Playnite sidebar
+2. Click the **+ Add** button in the toolbar
+3. Search for the game name in the search window
+4. Select the correct result (with image preview and price)
+5. (Optional) Enter a **price threshold** in EUR
+6. Click **Add** — the price will be updated immediately
 
-### Azioni per Gioco
+### Game Actions
 
-Ogni card nella lista ha 5 pulsanti azione:
+Each card in the list has 5 action buttons:
 
-| Icona | Azione | Descrizione |
-|:-----:|--------|-------------|
-| 🌐 | **Apri** | Apre la pagina AllKeyShop del gioco nel browser |
-| 🛒 | **Compra** | Vai direttamente all offerta al miglior prezzo |
-| ↻ | **Aggiorna** | Aggiorna il prezzo di questo specifico gioco |
-| ✏ | **Modifica soglia** | Apre il dialog per modificare/rimuovere la soglia prezzo |
-| 🗑 | **Rimuovi** | Rimuove il gioco dalla watchlist |
+| Icon | Action | Description |
+|:----:|--------|-------------|
+| 🌐 | **Open** | Opens the AllKeyShop page for the game in the browser |
+| 🛒 | **Buy** | Go directly to the best price offer |
+| ↻ | **Refresh** | Update the price for this specific game |
+| ✏ | **Edit threshold** | Opens the dialog to edit/remove the price threshold |
+| 🗑 | **Remove** | Removes the game from the watchlist |
 
-### Giochi Gratis
+### Free Games
 
-1. Clicca **Gratis** nella toolbar per controllare subito
-2. L elenco appare nella sezione espandibile in basso
-3. Clicca l icona link per aprire la pagina dell offerta
-
----
-
-## Impostazioni
-
-Accessibili da **Menu > Estensioni > Impostazioni estensioni > AllKeyShop Price Monitor**.
-
-| Impostazione | Default | Descrizione |
-|-------------|---------|-------------|
-| Notifiche abilitate | `Si` | Abilita/disabilita tutte le notifiche |
-| Alert prezzo | `Si` | Notifiche quando un prezzo scende sotto la soglia |
-| Intervallo aggiornamento prezzi | `60 min` | Frequenza aggiornamento automatico dei prezzi |
-| Intervallo controllo giochi gratis | `120 min` | Frequenza controllo nuovi giochi gratis |
-| Piattaforme | Nessuna | Piattaforme da monitorare per i giochi gratis |
-
-**Piattaforme supportate:** Steam, Epic Games Store, GOG, Xbox, PlayStation, Nintendo Switch, Origin, Uplay, Battle.net
+1. Click **Free** in the toolbar to check immediately
+2. The list appears in the expandable section at the bottom
+3. Click the link icon to open the offer page
 
 ---
 
-## Struttura Progetto
+## Settings
+
+Accessible from **Menu > Extensions > Extension settings > AllKeyShop Price Monitor**.
+
+| Setting | Default | Description |
+|---------|---------|-------------|
+| Notifications enabled | `Yes` | Enable/disable all notifications |
+| Price alerts | `Yes` | Notifications when a price drops below threshold |
+| Price update interval | `60 min` | Frequency of automatic price updates |
+| Free games check interval | `120 min` | Frequency of free games checks |
+| Platforms | None | Platforms to monitor for free games |
+
+**Supported platforms:** Steam, Epic Games Store, GOG, Xbox, PlayStation, Nintendo Switch, Origin, Uplay, Battle.net
+
+---
+
+## Project Structure
 
 ```
 AllKeyShopExtension/
-+-- Plugin.cs                  # Entry point: GenericPlugin, timers, sidebar
-+-- extension.yaml             # Manifest Playnite
-|
-+-- Models/
-|   +-- WatchedGame.cs         # Gioco monitorato (prezzi, soglia, thumbnail)
-|   +-- FreeGame.cs            # Gioco gratis trovato
-|   +-- GamePrice.cs           # Risultato scraping prezzi + OfferInfo
-|   +-- SearchResult.cs        # Risultato ricerca AllKeyShop
-|   +-- ExtensionSettings.cs   # Modello impostazioni
-|
-+-- Services/
-|   +-- AllKeyShopScraper.cs   # Scraping: search API + gamePageTrans JSON
-|   +-- PriceService.cs        # Logica business prezzi e watchlist
-|   +-- FreeGamesService.cs    # Logica giochi gratis (widget)
-|   +-- NotificationService.cs # Notifiche Playnite + Toast Windows
-|
-+-- Data/
-|   +-- Database.cs            # SQLite: CRUD + migration automatiche
-|
-+-- Views/
-|   +-- AllKeyShopSidebarView  # Sidebar principale (XAML + code-behind)
-|   +-- SearchGameWindow       # Dialog ricerca giochi
-|   +-- SettingsView            # Pagina impostazioni
-|   +-- PriceMonitorView/Window # Vista monitor prezzi (legacy)
-|
-+-- Utilities/
-|   +-- HttpClientHelper.cs    # HTTP client wrapper
-|
-+-- build.ps1                  # Script di build + packaging .pext
-+-- CHANGELOG.md               # Storico versioni
-+-- TODO.md                    # Roadmap feature future
+├── Plugin.cs                  # Entry point: GenericPlugin, timers, sidebar
+├── extension.yaml             # Playnite manifest
+│
+├── Models/
+│   ├── WatchedGame.cs         # Watched game (prices, threshold, thumbnail)
+│   ├── FreeGame.cs            # Free game found
+│   ├── GamePrice.cs           # Price scraping result + OfferInfo
+│   ├── SearchResult.cs        # AllKeyShop search result
+│   └── ExtensionSettings.cs   # Settings model
+│
+├── Services/
+│   ├── AllKeyShopScraper.cs   # Scraping: search API + gamePageTrans JSON
+│   ├── PriceService.cs        # Price and watchlist business logic
+│   ├── FreeGamesService.cs    # Free games logic (widget)
+│   └── NotificationService.cs # Playnite + Windows Toast notifications
+│
+├── Data/
+│   └── Database.cs            # SQLite: CRUD + automatic migrations
+│
+├── Views/
+│   ├── AllKeyShopSidebarView  # Main sidebar (XAML + code-behind)
+│   ├── SearchGameWindow       # Game search dialog
+│   ├── SettingsView           # Settings page
+│   └── PriceMonitorView/Window # Price monitor view (legacy)
+│
+├── Utilities/
+│   └── HttpClientHelper.cs    # HTTP client wrapper
+│
+├── build.ps1                  # Build + .pext packaging script
+├── CHANGELOG.md               # Version history
+└── TODO.md                    # Future feature roadmap
 ```
 
 ---
 
-## Sviluppo
+## Development
 
-### Prerequisiti
+### Prerequisites
 
-- Visual Studio 2022+ o VS Code con C# extension
+- Visual Studio 2022+ or VS Code with C# extension
 - .NET Framework 4.8 Developer Pack
-- Playnite installato (per Playnite.SDK.dll)
+- Playnite installed (for Playnite.SDK.dll)
 
-### Compilazione
+### Building
 
 ```powershell
 cd AllKeyShopExtension
 .\build.ps1
 ```
 
-Lo script:
-1. Trova automaticamente `Playnite.SDK.dll` in `%LOCALAPPDATA%\Playnite`
-2. Compila in modalita Release
-3. Copia le DLL necessarie (HtmlAgilityPack, Newtonsoft.Json, SQLite, Toast Notifications)
-4. Crea il file `.pext` con la versione letta da `extension.yaml`
+The script:
+1. Automatically finds `Playnite.SDK.dll` in `%LOCALAPPDATA%\Playnite`
+2. Compiles in Release mode
+3. Copies required DLLs (HtmlAgilityPack, Newtonsoft.Json, SQLite, Toast Notifications)
+4. Creates the `.pext` file with the version read from `extension.yaml`
 
-### Dipendenze NuGet
+### NuGet Dependencies
 
-| Pacchetto | Versione | Uso |
-|-----------|----------|-----|
-| HtmlAgilityPack | 1.11.71 | Parsing HTML per scraping |
-| Newtonsoft.Json | 13.0.3 | Serializzazione JSON (gamePageTrans, settings) |
-| System.Data.SQLite.Core | 1.0.118 | Database locale |
-| Microsoft.Toolkit.Uwp.Notifications | 7.1.3 | Toast Windows 10/11 |
+| Package | Version | Usage |
+|---------|---------|-------|
+| HtmlAgilityPack | 1.11.71 | HTML parsing for scraping |
+| Newtonsoft.Json | 13.0.3 | JSON serialization (gamePageTrans, settings) |
+| System.Data.SQLite.Core | 1.0.118 | Local database |
+| Microsoft.Toolkit.Uwp.Notifications | 7.1.3 | Windows 10/11 Toast notifications |
 
-### Come Funziona lo Scraping
+### How Scraping Works
 
-1. **Ricerca**: `POST` all endpoint AJAX `quicksearch` di AllKeyShop → parsing HTML dei risultati
-2. **Prezzi**: `GET` sulla pagina del gioco → estrazione del JSON `gamePageTrans` dallo script inline
-3. **Calcolo prezzo**: Per ogni offerta, il prezzo finale e il minimo tra `priceCard` e `pricePaypal` (LowestFeePrice)
-4. **Giochi gratis**: `GET` dal widget `widget.allkeyshop.com` → parsing degli slide HTML
+1. **Search**: `POST` to AllKeyShop's `quicksearch` AJAX endpoint → HTML result parsing
+2. **Prices**: `GET` on the game page → extraction of inline `gamePageTrans` JSON
+3. **Price calculation**: For each offer, the final price is the minimum between `priceCard` and `pricePaypal` (LowestFeePrice)
+4. **Free games**: `GET` from `widget.allkeyshop.com` → HTML slide parsing
 
 ---
 
 ## Roadmap
 
-Vedi [TODO.md](TODO.md) per la roadmap completa.
+See [TODO.md](TODO.md) for the full roadmap.
 
-**Prossimamente:**
-- Storico prezzi con mini-grafico
-- Import dalla libreria Playnite
-- Multi-valuta
-- Sync wishlist Steam
-- Export CSV/JSON
+**Coming soon:**
+- Price history with mini-chart
+- Import from Playnite library
+- Multi-currency support
+- Steam wishlist sync
+- CSV/JSON export
 
 ---
 
 ## Changelog
 
-Vedi [CHANGELOG.md](CHANGELOG.md) per la lista completa delle modifiche.
+See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
 
-### Ultime versioni
+### Latest versions
 
-- **v1.0.0** — UI professionale a card, thumbnail giochi, icone MDL2, fix timer, fix icone rotte
-- **v0.2.4** — Modifica soglia prezzo, notifiche Toast Windows
-- **v0.2.3** — Fix notifiche prezzo non funzionanti
-- **v0.2.2** — Rework tema/colori, widget giochi gratis
-- **v0.2.1** — Prezzi con commissioni (LowestFeePrice)
-- **v0.2.0** — Nuovo scraping gamePageTrans, ricerca giochi, prezzi key/account
-
----
-
-## Licenza
-
-Distribuito con licenza [MIT](LICENSE).
+- **v1.0.0** — Professional card-based UI, game thumbnails, MDL2 icons, timer fix, broken icons fix
+- **v0.2.4** — Edit price threshold, Windows Toast notifications
+- **v0.2.3** — Fix non-working price notifications
+- **v0.2.2** — Theme/color rework, free games widget
+- **v0.2.1** — Fee-included pricing (LowestFeePrice)
+- **v0.2.0** — New gamePageTrans scraping, game search, key/account prices
 
 ---
 
-## Autore
+## License
+
+Distributed under the [MIT](LICENSE) license.
+
+---
+
+## Author
 
 **Sassoanarchico** — [GitHub](https://github.com/sassoanarchico)
 
 ---
 
 <div align="center">
-<sub>Fatto con caffe e Python regex per Playnite</sub>
+<sub>Made with coffee and Python regex for Playnite</sub>
 </div>

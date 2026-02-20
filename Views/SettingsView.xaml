@@ -8,21 +8,21 @@
              Foreground="{DynamicResource TextBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
-            <TextBlock Text="Impostazioni AllKeyShop Extension" 
+            <TextBlock Text="AllKeyShop Extension Settings" 
                       FontSize="18" 
                       FontWeight="Bold" 
                       Margin="0,0,0,20"/>
 
             <!-- Notifications Section -->
-            <GroupBox Header="Notifiche" Margin="0,0,0,20">
+            <GroupBox Header="Notifications" Margin="0,0,0,20">
                 <StackPanel Margin="10">
                     <CheckBox x:Name="NotificationsEnabledCheckBox" 
-                             Content="Abilita notifiche" 
+                             Content="Enable notifications" 
                              Margin="0,5"
                              Checked="NotificationsEnabledCheckBox_Changed"
                              Unchecked="NotificationsEnabledCheckBox_Changed"/>
                     <CheckBox x:Name="PriceAlertsEnabledCheckBox" 
-                             Content="Abilita alert per soglie prezzo" 
+                             Content="Enable price threshold alerts" 
                              Margin="0,5"
                              Checked="PriceAlertsEnabledCheckBox_Changed"
                              Unchecked="PriceAlertsEnabledCheckBox_Changed"/>
@@ -30,10 +30,10 @@
             </GroupBox>
 
             <!-- Update Intervals Section -->
-            <GroupBox Header="Intervalli di Aggiornamento" Margin="0,0,0,20">
+            <GroupBox Header="Update Intervals" Margin="0,0,0,20">
                 <StackPanel Margin="10">
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Aggiornamento prezzi (minuti):" 
+                        <TextBlock Text="Price update interval (minutes):" 
                                   Width="250" 
                                   VerticalAlignment="Center"/>
                         <TextBox x:Name="PriceUpdateIntervalTextBox" 
@@ -41,7 +41,7 @@
                                 TextChanged="PriceUpdateIntervalTextBox_TextChanged"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Controllo giochi gratis (minuti):" 
+                        <TextBlock Text="Free games check interval (minutes):" 
                                   Width="250" 
                                   VerticalAlignment="Center"/>
                         <TextBox x:Name="FreeGamesCheckIntervalTextBox" 
@@ -52,7 +52,7 @@
             </GroupBox>
 
             <!-- Platforms Section -->
-            <GroupBox Header="Piattaforme per Notifiche Giochi Gratis" Margin="0,0,0,20">
+            <GroupBox Header="Platforms for Free Games Notifications" Margin="0,0,0,20">
                 <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10" x:Name="PlatformsStackPanel">
                         <!-- Platforms will be added dynamically -->
@@ -61,12 +61,12 @@
             </GroupBox>
 
             <!-- Open Price Monitor Button -->
-            <GroupBox Header="Vista Prezzi" Margin="0,0,0,20">
+            <GroupBox Header="Price View" Margin="0,0,0,20">
                 <StackPanel Margin="10">
-                    <TextBlock Text="Apri la finestra di monitoraggio prezzi per visualizzare e gestire i giochi monitorati." 
+                    <TextBlock Text="Open the price monitoring window to view and manage monitored games." 
                               TextWrapping="Wrap" 
                               Margin="0,0,0,10"/>
-                    <Button Content="Apri Monitor Prezzi" 
+                    <Button Content="Open Price Monitor" 
                            HorizontalAlignment="Left" 
                            Padding="20,5"
                            Click="OpenPriceMonitorButton_Click"/>
@@ -74,7 +74,7 @@
             </GroupBox>
 
             <!-- Save Button -->
-            <Button Content="Salva Impostazioni" 
+            <Button Content="Save Settings" 
                    HorizontalAlignment="Right" 
                    Padding="20,5"
                    Click="SaveButton_Click"/>

@@ -24,7 +24,7 @@ namespace AllKeyShopExtension.Models
         public string AccountSeller { get; set; }
         public string AccountOfferUrl { get; set; }
 
-        // AllKeyShop page URL (for "Apri" button)
+        // AllKeyShop page URL (for "Open" button)
         public string AllKeyShopPageUrl { get; set; }
 
         // All offers for detailed view

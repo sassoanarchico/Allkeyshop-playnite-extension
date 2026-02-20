@@ -68,14 +68,14 @@ namespace AllKeyShopExtension.Views
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
-                GameCountText.Text = $"{watchedGames.Count} giochi monitorati";
+                GameCountText.Text = $"{watchedGames.Count} games monitored";
 
                 var lastUpdate = games.Where(g => g.LastUpdate > DateTime.MinValue)
                                       .OrderByDescending(g => g.LastUpdate)
                                       .FirstOrDefault();
                 LastUpdateText.Text = lastUpdate != null
-                    ? $"Ultimo aggiornamento: {lastUpdate.LastUpdate:g}"
-                    : "Ultimo aggiornamento: mai";
+                    ? $"Last update: {lastUpdate.LastUpdate:g}"
+                    : "Last update: never";
             }
             catch (Exception ex)
             {
@@ -130,7 +130,7 @@ namespace AllKeyShopExtension.Views
             catch (Exception ex)
             {
                 logger.Error(ex, "Error in AddGameButton_Click");
-                StatusText.Text = "Errore nell'apertura della finestra di ricerca.";
+                StatusText.Text = "Error opening the search window.";
             }
         }
 
@@ -139,27 +139,27 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = $"Aggiunta di '{gameName}'...";
+                StatusText.Text = $"Adding '{gameName}'...";
 
                 var added = priceService.AddWatchedGame(gameName, pageUrl, threshold, imageUrl);
                 if (added)
                 {
                     LoadGames();
-                    StatusText.Text = $"Aggiornamento prezzo per '{gameName}'...";
+                    StatusText.Text = $"Updating price for '{gameName}'...";
 
                     var game = priceService.GetWatchedGameByName(gameName);
                     if (game != null)
                     {
                         await priceService.UpdateGamePrice(game);
                         LoadGames();
-                        StatusText.Text = $"'{gameName}' aggiunto con successo!";
+                        StatusText.Text = $"'{gameName}' added successfully!";
                     }
                 }
                 else
                 {
-                    StatusText.Text = $"'{gameName}' è già nella lista.";
-                    MessageBox.Show($"Il gioco '{gameName}' è già nella lista dei monitorati.",
-                                   "Gioco già presente",
+                    StatusText.Text = $"'{gameName}' is already in the list.";
+                    MessageBox.Show($"The game '{gameName}' is already in the monitored list.",
+                                   "Game already exists",
                                    MessageBoxButton.OK,
                                    MessageBoxImage.Information);
                 }
@@ -167,8 +167,8 @@ namespace AllKeyShopExtension.Views
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error adding game '{gameName}'");
-                StatusText.Text = "Errore durante l'aggiunta.";
-                MessageBox.Show($"Errore: {ex.Message}", "Errore",
+                StatusText.Text = "Error while adding the game.";
+                MessageBox.Show($"Error: {ex.Message}", "Error",
                                MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -182,7 +182,7 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Aggiornamento prezzi in corso...";
+                StatusText.Text = "Updating prices...";
 
                 await priceService.UpdateAllPrices();
                 LoadGames();
@@ -190,12 +190,12 @@ namespace AllKeyShopExtension.Views
                 // Check for price alerts
                 CheckAndNotifyPriceAlerts();
 
-                StatusText.Text = "Prezzi aggiornati!";
+                StatusText.Text = "Prices updated!";
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error refreshing prices");
-                StatusText.Text = "Errore durante l'aggiornamento.";
+                StatusText.Text = "Error while updating prices.";
             }
             finally
             {
@@ -208,19 +208,19 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Cercando giochi gratis...";
+                StatusText.Text = "Searching for free games...";
 
                 await freeGamesService.CheckForDailyDeals();
 
                 LoadFreeGames();
                 FreeGamesExpander.IsExpanded = true;
 
-                StatusText.Text = $"Trovati {freeGames.Count} giochi gratis recenti";
+                StatusText.Text = $"Found {freeGames.Count} recent free games";
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error checking free games");
-                StatusText.Text = "Errore nel controllo giochi gratis.";
+                StatusText.Text = "Error checking free games.";
             }
             finally
             {
@@ -282,7 +282,7 @@ namespace AllKeyShopExtension.Views
             {
                 if (sender is Button btn && btn.Tag is WatchedGame game)
                 {
-                    StatusText.Text = $"Aggiornamento '{game.GameName}'...";
+                    StatusText.Text = $"Updating '{game.GameName}'...";
                     await priceService.UpdateGamePrice(game);
                     LoadGames();
 
@@ -293,13 +293,13 @@ namespace AllKeyShopExtension.Views
                         notificationService.NotifyPriceAlert(updatedGame);
                     }
 
-                    StatusText.Text = $"'{game.GameName}' aggiornato!";
+                    StatusText.Text = $"'{game.GameName}' updated!";
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error updating single game");
-                StatusText.Text = "Errore aggiornamento.";
+                StatusText.Text = "Update error.";
             }
         }
 
@@ -312,7 +312,7 @@ namespace AllKeyShopExtension.Views
                     // Build a small WPF dialog for editing the threshold
                     var dialog = new Window
                     {
-                        Title = $"Modifica Soglia - {game.GameName}",
+                        Title = $"Edit Threshold - {game.GameName}",
                         Width = 400,
                         Height = 200,
                         WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -325,7 +325,7 @@ namespace AllKeyShopExtension.Views
 
                     var label = new TextBlock
                     {
-                        Text = $"Soglia prezzo per \"{game.GameName}\":",
+                        Text = $"Price threshold for \"{game.GameName}\":",
                         FontSize = 13,
                         Foreground = System.Windows.Media.Brushes.White,
                         Margin = new Thickness(0, 0, 0, 8)
@@ -335,8 +335,8 @@ namespace AllKeyShopExtension.Views
                     var currentLabel = new TextBlock
                     {
                         Text = game.PriceThreshold.HasValue
-                            ? $"Soglia attuale: {game.PriceThreshold.Value:0.00}€"
-                            : "Nessuna soglia impostata",
+                            ? $"Current threshold: {game.PriceThreshold.Value:0.00}€"
+                            : "No threshold set",
                         FontSize = 11,
                         Foreground = System.Windows.Media.Brushes.LightGray,
                         Margin = new Thickness(0, 0, 0, 8)
@@ -353,9 +353,9 @@ namespace AllKeyShopExtension.Views
                     stack.Children.Add(textBox);
 
                     var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-                    var saveBtn = new Button { Content = "Salva", Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
-                    var clearBtn = new Button { Content = "Rimuovi soglia", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
-                    var cancelBtn = new Button { Content = "Annulla", Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
+                    var saveBtn = new Button { Content = "Save", Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var clearBtn = new Button { Content = "Remove threshold", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var cancelBtn = new Button { Content = "Cancel", Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
 
                     decimal? newThreshold = game.PriceThreshold;
                     bool saved = false;
@@ -371,7 +371,7 @@ namespace AllKeyShopExtension.Views
                         }
                         else
                         {
-                            MessageBox.Show("Inserisci un prezzo valido (es. 15.50)", "Valore non valido",
+                            MessageBox.Show("Enter a valid price (e.g. 15.50)", "Invalid value",
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                         }
                     };
@@ -396,15 +396,15 @@ namespace AllKeyShopExtension.Views
                         priceService.UpdateThreshold(game.Id, newThreshold);
                         LoadGames();
                         StatusText.Text = newThreshold.HasValue
-                            ? $"Soglia per '{game.GameName}' aggiornata a {newThreshold.Value:0.00}€"
-                            : $"Soglia per '{game.GameName}' rimossa";
+                            ? $"Threshold for '{game.GameName}' updated to {newThreshold.Value:0.00}€"
+                            : $"Threshold for '{game.GameName}' removed";
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error editing threshold");
-                StatusText.Text = "Errore nella modifica della soglia.";
+                StatusText.Text = "Error editing threshold.";
             }
         }
 
@@ -415,8 +415,8 @@ namespace AllKeyShopExtension.Views
                 if (sender is Button btn && btn.Tag is int gameId)
                 {
                     var result = MessageBox.Show(
-                        "Sei sicuro di voler rimuovere questo gioco dalla lista?",
-                        "Conferma rimozione",
+                        "Are you sure you want to remove this game from the list?",
+                        "Confirm removal",
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
@@ -424,7 +424,7 @@ namespace AllKeyShopExtension.Views
                     {
                         priceService.RemoveWatchedGame(gameId);
                         LoadGames();
-                        StatusText.Text = "Gioco rimosso.";
+                        StatusText.Text = "Game removed.";
                     }
                 }
             }
@@ -471,7 +471,7 @@ namespace AllKeyShopExtension.Views
 
                 if (alertGames.Count > 0)
                 {
-                    StatusText.Text = $"Prezzi aggiornati! {alertGames.Count} alert prezzo!";
+                    StatusText.Text = $"Prices updated! {alertGames.Count} price alert(s)!";
                     logger.Info($"Price alerts triggered for {alertGames.Count} game(s) from sidebar");
                 }
             }

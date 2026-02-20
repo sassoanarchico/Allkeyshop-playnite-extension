@@ -19,7 +19,7 @@ namespace AllKeyShopExtension.Models
         public decimal? AccountPrice { get; set; }
         public string AccountSeller { get; set; }
 
-        // AllKeyShop page URL (for "Apri" button)
+        // AllKeyShop page URL (for "Open" button)
         public string AllKeyShopPageUrl { get; set; }
 
         // Game thumbnail URL (from search results)

@@ -65,7 +65,7 @@ namespace AllKeyShopExtension.Services
                     var games = platformGroup.ToList();
 
                     var message = BuildFreeGamesMessage(games);
-                    var text = $"🎮 Nuovi giochi gratis su {platform}!\n{message}";
+                    var text = $"🎮 New free games on {platform}!\n{message}";
 
                     logger.Info($"Sending free games notification: {text}");
 
@@ -87,9 +87,9 @@ namespace AllKeyShopExtension.Services
 
                     // Windows toast
                     SendWindowsToast(
-                        $"Giochi Gratis su {platform}!",
+                        $"Free Games on {platform}!",
                         string.Join(", ", games.Take(3).Select(g => g.GameName)) +
-                            (games.Count > 3 ? $" (+{games.Count - 3} altri)" : ""),
+                            (games.Count > 3 ? $" (+{games.Count - 3} more)" : ""),
                         firstUrl
                     );
                 }
@@ -133,9 +133,9 @@ namespace AllKeyShopExtension.Services
 
                 if (!bestPrice.HasValue) return;
 
-                var text = $"💰 {game.GameName} - Prezzo sceso a {bestPrice.Value:0.00}€" +
+                var text = $"💰 {game.GameName} - Price dropped to {bestPrice.Value:0.00}€" +
                            (bestSeller != null ? $" ({bestSeller})" : "") +
-                           $" | Soglia: {game.PriceThreshold.Value:0.00}€";
+                           $" | Threshold: {game.PriceThreshold.Value:0.00}€";
                 var sellerText = bestSeller != null ? $" ({bestSeller})" : "";
 
                 // Use stable ID per game to avoid duplicate notifications
@@ -163,8 +163,8 @@ namespace AllKeyShopExtension.Services
 
                 // Windows toast notification
                 SendWindowsToast(
-                    $"Alert Prezzo: {game.GameName}",
-                    $"Prezzo: {bestPrice.Value:0.00}€{sellerText} (Soglia: {game.PriceThreshold.Value:0.00}€)",
+                    $"Price Alert: {game.GameName}",
+                    $"Price: {bestPrice.Value:0.00}€{sellerText} (Threshold: {game.PriceThreshold.Value:0.00}€)",
                     url
                 );
             }
@@ -184,10 +184,10 @@ namespace AllKeyShopExtension.Services
             try
             {
                 var priceChange = game.LastPrice.Value - oldPrice;
-                var direction = priceChange > 0 ? "aumentato" : "diminuito";
+                var direction = priceChange > 0 ? "increased" : "decreased";
                 var changeText = Math.Abs(priceChange).ToString("0.00") + "€";
 
-                var text = $"📊 {game.GameName}: prezzo {direction} di {changeText}. Nuovo prezzo: {game.LastPrice.Value:0.00}€";
+                var text = $"📊 {game.GameName}: price {direction} by {changeText}. New price: {game.LastPrice.Value:0.00}€";
 
                 logger.Info($"Sending price update notification: {text}");
 
@@ -209,8 +209,8 @@ namespace AllKeyShopExtension.Services
                 if (priceChange < 0)
                 {
                     SendWindowsToast(
-                        $"Prezzo aggiornato: {game.GameName}",
-                        $"Prezzo sceso di {changeText}. Nuovo prezzo: {game.LastPrice.Value:0.00}€"
+                        $"Price updated: {game.GameName}",
+                        $"Price dropped by {changeText}. New price: {game.LastPrice.Value:0.00}€"
                     );
                 }
             }
@@ -223,7 +223,7 @@ namespace AllKeyShopExtension.Services
         private string BuildFreeGamesMessage(List<FreeGame> games)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Trovati {games.Count} nuovo/i gioco/i gratis:");
+            sb.AppendLine($"Found {games.Count} new free game(s):");
 
             foreach (var game in games.Take(5)) // Show max 5 games
             {
@@ -232,7 +232,7 @@ namespace AllKeyShopExtension.Services
 
             if (games.Count > 5)
             {
-                sb.AppendLine($"... e altri {games.Count - 5} giochi");
+                sb.AppendLine($"... and {games.Count - 5} more games");
             }
 
             return sb.ToString();
