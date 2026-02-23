@@ -6,3 +6,4 @@ Description: Monitor game prices from AllKeyShop and get notified about free gam
 Website: https://github.com/sassoanarchico/allkeyshop-playnite
 Module: AllKeyShopExtension.dll
 Type: GenericPlugin
+Icon: icon.png
