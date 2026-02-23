@@ -41,4 +41,11 @@
     </Compile>
   </ItemGroup>
 
+  <!-- Localization files - copy to output as content -->
+  <ItemGroup>
+    <None Include="Localization\*.xaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>

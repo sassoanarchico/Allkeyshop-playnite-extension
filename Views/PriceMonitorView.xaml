@@ -15,15 +15,15 @@
         <!-- Header -->
         <Border Grid.Row="0" Padding="10" BorderThickness="0,0,0,1">
             <StackPanel Orientation="Horizontal">
-                <TextBlock Text="AllKeyShop Price Monitor" 
+                <TextBlock Text="{DynamicResource LOCAllKeyShop_PriceMonitor_Title}" 
                           FontSize="16" 
                           FontWeight="Bold" 
                           VerticalAlignment="Center"/>
-                <Button Content="Add Game" 
+                <Button Content="{DynamicResource LOCAllKeyShop_PriceMonitor_AddGame}" 
                        Margin="10,0,0,0" 
                        Click="AddGameButton_Click"
                        Padding="10,5"/>
-                <Button Content="Refresh" 
+                <Button Content="{DynamicResource LOCAllKeyShop_PriceMonitor_Refresh}" 
                        Margin="5,0,0,0" 
                        Click="RefreshButton_Click"
                        Padding="10,5"/>
@@ -43,22 +43,22 @@
                  GridLinesVisibility="All"
                  HeadersVisibility="Column">
             <DataGrid.Columns>
-                <DataGridTextColumn Header="Game" 
+                <DataGridTextColumn Header="{DynamicResource LOCAllKeyShop_PriceMonitor_Column_Game}" 
                                   Binding="{Binding GameName}" 
                                   Width="*"/>
-                <DataGridTextColumn Header="Price" 
+                <DataGridTextColumn Header="{DynamicResource LOCAllKeyShop_PriceMonitor_Column_Price}" 
                                   Binding="{Binding LastPrice, StringFormat={}{0:C}}" 
                                   Width="120"/>
-                <DataGridTextColumn Header="Seller" 
+                <DataGridTextColumn Header="{DynamicResource LOCAllKeyShop_PriceMonitor_Column_Seller}" 
                                   Binding="{Binding LastSeller}" 
                                   Width="150"/>
-                <DataGridTextColumn Header="Last Update" 
+                <DataGridTextColumn Header="{DynamicResource LOCAllKeyShop_PriceMonitor_Column_LastUpdate}" 
                                   Binding="{Binding LastUpdate, StringFormat={}{0:g}}" 
                                   Width="180"/>
-                <DataGridTemplateColumn Header="Actions" Width="100">
+                <DataGridTemplateColumn Header="{DynamicResource LOCAllKeyShop_PriceMonitor_Column_Actions}" Width="100">
                     <DataGridTemplateColumn.CellTemplate>
                         <DataTemplate>
-                            <Button Content="Remove" 
+                            <Button Content="{DynamicResource LOCAllKeyShop_PriceMonitor_Remove}" 
                                    Click="RemoveButton_Click"
                                    Tag="{Binding Id}"
                                    Padding="5,2"/>
@@ -75,7 +75,7 @@
                Visibility="Collapsed">
             <StackPanel HorizontalAlignment="Center" 
                        VerticalAlignment="Center">
-                <TextBlock Text="Loading..." 
+                <TextBlock Text="{DynamicResource LOCAllKeyShop_PriceMonitor_Loading}" 
                           FontSize="14"
                           Margin="0,0,0,10"/>
                 <ProgressBar IsIndeterminate="True" 
@@ -90,12 +90,12 @@
                    HorizontalAlignment="Center" 
                    VerticalAlignment="Center"
                    Visibility="Collapsed">
-            <TextBlock Text="No games monitored" 
+            <TextBlock Text="{DynamicResource LOCAllKeyShop_PriceMonitor_EmptyState}" 
                       FontSize="14" 
                       Opacity="0.6"
                       HorizontalAlignment="Center"
                       Margin="0,0,0,10"/>
-            <TextBlock Text="Click 'Add Game' to start monitoring prices" 
+            <TextBlock Text="{DynamicResource LOCAllKeyShop_PriceMonitor_EmptyState_Hint}" 
                       FontSize="12" 
                       Opacity="0.5"
                       HorizontalAlignment="Center"/>

@@ -125,8 +125,8 @@ namespace AllKeyShopExtension.Views
             {
                 if (priceService == null)
                 {
-                    MessageBox.Show("The price service is not available. Restart Playnite and try again.", 
-                                   "Service not available", 
+                    MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Settings_Service_Unavailable"), 
+                                   ResourceProvider.GetString("LOCAllKeyShop_Settings_Service_Unavailable_Title"), 
                                    MessageBoxButton.OK, 
                                    MessageBoxImage.Warning);
                     return;
@@ -139,7 +139,7 @@ namespace AllKeyShopExtension.Views
             {
                 logger.Error(ex, "Error opening price monitor from settings");
                 MessageBox.Show($"Error: {ex.Message}", 
-                               "Error", 
+                               ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"), 
                                MessageBoxButton.OK, 
                                MessageBoxImage.Error);
             }
@@ -152,8 +152,8 @@ namespace AllKeyShopExtension.Views
                 // Validate intervals
                 if (!int.TryParse(PriceUpdateIntervalTextBox.Text, out int priceInterval) || priceInterval <= 0)
                 {
-                    MessageBox.Show("The price update interval must be a positive number.", 
-                                   "Error", 
+                    MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Settings_Save_IntervalError_Price"), 
+                                   ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"), 
                                    MessageBoxButton.OK, 
                                    MessageBoxImage.Error);
                     return;
@@ -161,8 +161,8 @@ namespace AllKeyShopExtension.Views
 
                 if (!int.TryParse(FreeGamesCheckIntervalTextBox.Text, out int freeGamesInterval) || freeGamesInterval <= 0)
                 {
-                    MessageBox.Show("The free games check interval must be a positive number.", 
-                                   "Error", 
+                    MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Settings_Save_IntervalError_FreeGames"), 
+                                   ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"), 
                                    MessageBoxButton.OK, 
                                    MessageBoxImage.Error);
                     return;
@@ -177,16 +177,16 @@ namespace AllKeyShopExtension.Views
                 // Settings will be reloaded on next access
                 // The extension will pick up the new settings automatically
 
-                MessageBox.Show("Settings saved successfully!", 
-                               "Success", 
+                MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Settings_Save_Success"), 
+                               ResourceProvider.GetString("LOCAllKeyShop_Dialog_Success_Title"), 
                                MessageBoxButton.OK, 
                                MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error saving settings: {ex.Message}");
-                MessageBox.Show($"Error while saving: {ex.Message}", 
-                               "Error", 
+                MessageBox.Show(string.Format(ResourceProvider.GetString("LOCAllKeyShop_Settings_Save_Error"), ex.Message), 
+                               ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"), 
                                MessageBoxButton.OK, 
                                MessageBoxImage.Error);
             }

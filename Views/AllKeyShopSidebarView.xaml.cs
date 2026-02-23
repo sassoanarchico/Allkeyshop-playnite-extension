@@ -68,14 +68,14 @@ namespace AllKeyShopExtension.Views
                     ? Visibility.Collapsed
                     : Visibility.Visible;
 
-                GameCountText.Text = $"{watchedGames.Count} games monitored";
+                GameCountText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_GamesMonitored"), watchedGames.Count);
 
                 var lastUpdate = games.Where(g => g.LastUpdate > DateTime.MinValue)
                                       .OrderByDescending(g => g.LastUpdate)
                                       .FirstOrDefault();
                 LastUpdateText.Text = lastUpdate != null
-                    ? $"Last update: {lastUpdate.LastUpdate:g}"
-                    : "Last update: never";
+                    ? string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_LastUpdate"), lastUpdate.LastUpdate.ToString("g"))
+                    : ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_LastUpdate_Never");
             }
             catch (Exception ex)
             {
@@ -131,7 +131,7 @@ namespace AllKeyShopExtension.Views
             catch (Exception ex)
             {
                 logger.Error(ex, "Error in AddGameButton_Click");
-                StatusText.Text = "Error opening the search window.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_SearchWindowError");
             }
         }
 
@@ -140,27 +140,27 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = $"Adding '{gameName}'...";
+                StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_Adding"), gameName);
 
                 var added = priceService.AddWatchedGame(gameName, pageUrl, keyThreshold, accountThreshold, imageUrl);
                 if (added)
                 {
                     LoadGames();
-                    StatusText.Text = $"Updating price for '{gameName}'...";
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_UpdatingPrice"), gameName);
 
                     var game = priceService.GetWatchedGameByName(gameName);
                     if (game != null)
                     {
                         await priceService.UpdateGamePrice(game);
                         LoadGames();
-                        StatusText.Text = $"'{gameName}' added successfully!";
+                        StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_AddedSuccess"), gameName);
                     }
                 }
                 else
                 {
-                    StatusText.Text = $"'{gameName}' is already in the list.";
-                    MessageBox.Show($"The game '{gameName}' is already in the monitored list.",
-                                   "Game already exists",
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_AlreadyInList"), gameName);
+                    MessageBox.Show(string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Dialog_AlreadyExists"), gameName),
+                                   ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Dialog_AlreadyExists_Title"),
                                    MessageBoxButton.OK,
                                    MessageBoxImage.Information);
                 }
@@ -168,8 +168,8 @@ namespace AllKeyShopExtension.Views
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error adding game '{gameName}'");
-                StatusText.Text = "Error while adding the game.";
-                MessageBox.Show($"Error: {ex.Message}", "Error",
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_AddError");
+                MessageBox.Show($"Error: {ex.Message}", ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"),
                                MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
@@ -183,7 +183,7 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Updating prices...";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_Updating");
 
                 await priceService.UpdateAllPrices();
                 LoadGames();
@@ -191,12 +191,12 @@ namespace AllKeyShopExtension.Views
                 // Check for price alerts
                 CheckAndNotifyPriceAlerts();
 
-                StatusText.Text = "Prices updated!";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_Updated");
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error refreshing prices");
-                StatusText.Text = "Error while updating prices.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_UpdateError");
             }
             finally
             {
@@ -209,19 +209,19 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Searching for free games...";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_SearchingFree");
 
                 await freeGamesService.CheckForDailyDeals();
 
                 LoadFreeGames();
                 FreeGamesExpander.IsExpanded = true;
 
-                StatusText.Text = $"Found {freeGames.Count} recent free games";
+                StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_FreeGamesFound"), freeGames.Count);
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error checking free games");
-                StatusText.Text = "Error checking free games.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_FreeGamesError");
             }
             finally
             {
@@ -283,7 +283,7 @@ namespace AllKeyShopExtension.Views
             {
                 if (sender is Button btn && btn.Tag is WatchedGame game)
                 {
-                    StatusText.Text = $"Updating '{game.GameName}'...";
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_UpdatingSingle"), game.GameName);
                     await priceService.UpdateGamePrice(game);
                     LoadGames();
 
@@ -294,13 +294,13 @@ namespace AllKeyShopExtension.Views
                         notificationService.NotifyPriceAlert(updatedGame);
                     }
 
-                    StatusText.Text = $"'{game.GameName}' updated!";
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_UpdatedSingle"), game.GameName);
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error updating single game");
-                StatusText.Text = "Update error.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_UpdateSingleError");
             }
         }
 
@@ -313,7 +313,7 @@ namespace AllKeyShopExtension.Views
                     // Build a WPF dialog for editing dual thresholds (Key + Account)
                     var dialog = new Window
                     {
-                        Title = $"Edit Thresholds - {game.GameName}",
+                        Title = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_WindowTitle"), game.GameName),
                         Width = 420,
                         Height = 300,
                         WindowStartupLocation = WindowStartupLocation.CenterScreen,
@@ -326,7 +326,7 @@ namespace AllKeyShopExtension.Views
 
                     var titleLabel = new TextBlock
                     {
-                        Text = $"Price thresholds for \"{game.GameName}\":",
+                        Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Description"), game.GameName),
                         FontSize = 13,
                         Foreground = System.Windows.Media.Brushes.White,
                         Margin = new Thickness(0, 0, 0, 12)
@@ -337,8 +337,8 @@ namespace AllKeyShopExtension.Views
                     var keyLabel = new TextBlock
                     {
                         Text = game.KeyPriceThreshold.HasValue
-                            ? $"Key threshold (current: {game.KeyPriceThreshold.Value:0.00}€):"
-                            : "Key threshold (not set):",
+                            ? string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Key_Current"), game.KeyPriceThreshold.Value.ToString("0.00"))
+                            : ResourceProvider.GetString("LOCAllKeyShop_Threshold_Key_NotSet"),
                         FontSize = 12,
                         Foreground = System.Windows.Media.Brushes.White,
                         Margin = new Thickness(0, 0, 0, 4)
@@ -358,8 +358,8 @@ namespace AllKeyShopExtension.Views
                     var accountLabel = new TextBlock
                     {
                         Text = game.AccountPriceThreshold.HasValue
-                            ? $"Account threshold (current: {game.AccountPriceThreshold.Value:0.00}€):"
-                            : "Account threshold (not set):",
+                            ? string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Account_Current"), game.AccountPriceThreshold.Value.ToString("0.00"))
+                            : ResourceProvider.GetString("LOCAllKeyShop_Threshold_Account_NotSet"),
                         FontSize = 12,
                         Foreground = System.Windows.Media.Brushes.White,
                         Margin = new Thickness(0, 0, 0, 4)
@@ -377,9 +377,9 @@ namespace AllKeyShopExtension.Views
 
                     // Buttons
                     var btnPanel = new StackPanel { Orientation = Orientation.Horizontal, HorizontalAlignment = HorizontalAlignment.Right };
-                    var saveBtn = new Button { Content = "Save", Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
-                    var clearBtn = new Button { Content = "Remove all", Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
-                    var cancelBtn = new Button { Content = "Cancel", Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
+                    var saveBtn = new Button { Content = ResourceProvider.GetString("LOCAllKeyShop_Threshold_Save"), Padding = new Thickness(20, 6, 20, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var clearBtn = new Button { Content = ResourceProvider.GetString("LOCAllKeyShop_Threshold_RemoveAll"), Padding = new Thickness(16, 6, 16, 6), Margin = new Thickness(0, 0, 8, 0) };
+                    var cancelBtn = new Button { Content = ResourceProvider.GetString("LOCAllKeyShop_Threshold_Cancel"), Padding = new Thickness(16, 6, 16, 6), IsCancel = true };
 
                     decimal? newKeyThreshold = game.KeyPriceThreshold;
                     decimal? newAccountThreshold = game.AccountPriceThreshold;
@@ -399,7 +399,7 @@ namespace AllKeyShopExtension.Views
                         }
                         else
                         {
-                            MessageBox.Show("Enter a valid key price (e.g. 15.50) or leave empty.", "Invalid value",
+                            MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Error_InvalidKey"), ResourceProvider.GetString("LOCAllKeyShop_Threshold_Error_Title"),
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
@@ -416,7 +416,7 @@ namespace AllKeyShopExtension.Views
                         }
                         else
                         {
-                            MessageBox.Show("Enter a valid account price (e.g. 10.00) or leave empty.", "Invalid value",
+                            MessageBox.Show(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Error_InvalidAccount"), ResourceProvider.GetString("LOCAllKeyShop_Threshold_Error_Title"),
                                 MessageBoxButton.OK, MessageBoxImage.Warning);
                             return;
                         }
@@ -450,15 +450,15 @@ namespace AllKeyShopExtension.Views
                         if (newKeyThreshold.HasValue) parts.Add($"Key: {newKeyThreshold.Value:0.00}€");
                         if (newAccountThreshold.HasValue) parts.Add($"Account: {newAccountThreshold.Value:0.00}€");
                         StatusText.Text = parts.Count > 0
-                            ? $"Thresholds for '{game.GameName}' updated: {string.Join(", ", parts)}"
-                            : $"All thresholds for '{game.GameName}' removed";
+                            ? string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Status_Updated"), game.GameName, string.Join(", ", parts))
+                            : string.Format(ResourceProvider.GetString("LOCAllKeyShop_Threshold_Status_Removed"), game.GameName);
                     }
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, "Error editing threshold");
-                StatusText.Text = "Error editing threshold.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_Threshold_Status_Error");
             }
         }
 
@@ -469,8 +469,8 @@ namespace AllKeyShopExtension.Views
                 if (sender is Button btn && btn.Tag is int gameId)
                 {
                     var result = MessageBox.Show(
-                        "Are you sure you want to remove this game from the list?",
-                        "Confirm removal",
+                        ResourceProvider.GetString("LOCAllKeyShop_Dialog_ConfirmRemoval"),
+                        ResourceProvider.GetString("LOCAllKeyShop_Dialog_ConfirmRemoval_Title"),
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
@@ -478,7 +478,7 @@ namespace AllKeyShopExtension.Views
                     {
                         priceService.RemoveWatchedGame(gameId);
                         LoadGames();
-                        StatusText.Text = "Game removed.";
+                        StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_GameRemoved");
                     }
                 }
             }
@@ -525,7 +525,7 @@ namespace AllKeyShopExtension.Views
 
                 if (alertGames.Count > 0)
                 {
-                    StatusText.Text = $"Prices updated! {alertGames.Count} price alert(s)!";
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Status_AlertsTriggered"), alertGames.Count);
                     logger.Info($"Price alerts triggered for {alertGames.Count} game(s) from sidebar");
                 }
             }

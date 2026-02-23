@@ -89,7 +89,7 @@ namespace AllKeyShopExtension.Views
             {
                 LoadingOverlay.Visibility = Visibility.Visible;
                 SearchButton.IsEnabled = false;
-                StatusText.Text = $"Searching for '{query}'...";
+                StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Search_Status_Searching"), query);
                 searchResults.Clear();
                 ConfirmButton.IsEnabled = false;
 
@@ -101,13 +101,13 @@ namespace AllKeyShopExtension.Views
                 }
 
                 StatusText.Text = results.Count > 0
-                    ? $"Found {results.Count} results. Select the correct game."
-                    : "No results found. Try a different name.";
+                    ? string.Format(ResourceProvider.GetString("LOCAllKeyShop_Search_Status_Found"), results.Count)
+                    : ResourceProvider.GetString("LOCAllKeyShop_Search_Status_NotFound");
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error searching for '{query}'");
-                StatusText.Text = $"Search error: {ex.Message}";
+                StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Search_Status_Error"), ex.Message);
             }
             finally
             {

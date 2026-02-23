@@ -40,10 +40,10 @@
                     <TextBlock Text="&#xEF40;" FontFamily="Segoe MDL2 Assets"
                                FontSize="22" VerticalAlignment="Center"
                                Margin="0,0,10,0" Opacity="0.75"/>
-                    <TextBlock Text="AllKeyShop Price Monitor" 
+                    <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Title}" 
                                FontSize="20" FontWeight="Bold"/>
                 </StackPanel>
-                <TextBlock Text="Monitor your game prices and discover free games" 
+                <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Subtitle}" 
                            FontSize="11.5" Opacity="0.5" Margin="32,3,0,0"/>
             </StackPanel>
         </Border>
@@ -58,29 +58,29 @@
                 <StackPanel Orientation="Horizontal">
                     <Button Style="{StaticResource ToolbarBtn}" 
                             Click="AddGameButton_Click" 
-                            ToolTip="Add a game to monitor">
+                            ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_Add}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE710;" FontFamily="Segoe MDL2 Assets" 
                                        FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Add" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Add}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource ToolbarBtn}" 
                             Click="RefreshButton_Click" 
-                            ToolTip="Refresh all prices">
+                            ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_Refresh}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" 
                                        FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Refresh" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Refresh}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                     <Button Style="{StaticResource ToolbarBtn}" 
                             Click="ShowFreeGamesButton_Click" 
-                            ToolTip="Check free games">
+                            ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_Free}">
                         <StackPanel Orientation="Horizontal">
                             <TextBlock Text="&#xE8E6;" FontFamily="Segoe MDL2 Assets" 
                                        FontSize="14" VerticalAlignment="Center" Margin="0,0,6,0"/>
-                            <TextBlock Text="Free" VerticalAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Free}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
                 </StackPanel>
@@ -127,10 +127,10 @@
                                                    FontSize="13.5" FontWeight="SemiBold"
                                                    TextTrimming="CharacterEllipsis"/>
                                         <StackPanel Orientation="Horizontal" Margin="0,3,0,0">
-                                            <TextBlock Text="Key: " FontSize="11" Opacity="0.5"/>
+                                            <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Key}" FontSize="11" Opacity="0.5"/>
                                             <TextBlock Text="{Binding KeyPriceDisplay}" FontSize="11" Opacity="0.85"/>
                                             <TextBlock Text="  &#x00B7;  " FontSize="11" Opacity="0.3"/>
-                                            <TextBlock Text="Account: " FontSize="11" Opacity="0.5"/>
+                                            <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Account}" FontSize="11" Opacity="0.5"/>
                                             <TextBlock Text="{Binding AccountPriceDisplay}" FontSize="11" Opacity="0.85"/>
                                         </StackPanel>
                                         <StackPanel Orientation="Horizontal" Margin="0,2,0,0">
@@ -156,27 +156,27 @@
                                                    Margin="0,0,0,6"/>
                                         <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
                                             <Button Style="{StaticResource IconBtn}" 
-                                                    ToolTip="Open AllKeyShop page"
+                                                    ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_OpenPage}"
                                                     Click="OpenUrlButton_Click" Tag="{Binding}">
                                                 <TextBlock Text="&#xE774;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
                                             </Button>
                                             <Button Style="{StaticResource IconBtn}" 
-                                                    ToolTip="Go to best offer"
+                                                    ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_BestOffer}"
                                                     Click="BuyButton_Click" Tag="{Binding}">
                                                 <TextBlock Text="&#xE7BF;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
                                             </Button>
                                             <Button Style="{StaticResource IconBtn}" 
-                                                    ToolTip="Refresh price"
+                                                    ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_RefreshPrice}"
                                                     Click="UpdateSingleButton_Click" Tag="{Binding}">
                                                 <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
                                             </Button>
                                             <Button Style="{StaticResource IconBtn}" 
-                                                    ToolTip="Edit price threshold"
+                                                    ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_EditThreshold}"
                                                     Click="EditThresholdButton_Click" Tag="{Binding}">
                                                 <TextBlock Text="&#xE70F;" FontFamily="Segoe MDL2 Assets" FontSize="12"/>
                                             </Button>
                                             <Button Style="{StaticResource IconBtn}" 
-                                                    ToolTip="Remove from watchlist"
+                                                    ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_Remove}"
                                                     Click="RemoveButton_Click" Tag="{Binding Id}">
                                                 <TextBlock Text="&#xE74D;" FontFamily="Segoe MDL2 Assets"
                                                            FontSize="12" Foreground="#FF6B68"/>
@@ -198,10 +198,10 @@
                 <TextBlock Text="&#xE7FC;" FontFamily="Segoe MDL2 Assets"
                            FontSize="48" Opacity="0.15"
                            HorizontalAlignment="Center" Margin="0,0,0,12"/>
-                <TextBlock Text="No games monitored" 
+                <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_EmptyState}" 
                            FontSize="16" Opacity="0.45"
                            HorizontalAlignment="Center" Margin="0,0,0,8"/>
-                <TextBlock Text="Click 'Add' to start monitoring prices" 
+                <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_EmptyState_Hint}" 
                            FontSize="12" Opacity="0.3"
                            HorizontalAlignment="Center"
                            TextWrapping="Wrap" MaxWidth="300"/>
@@ -215,7 +215,7 @@
                     <TextBlock Text="&#xE72C;" FontFamily="Segoe MDL2 Assets"
                                FontSize="28" Foreground="White" Opacity="0.7"
                                HorizontalAlignment="Center" Margin="0,0,0,12"/>
-                    <TextBlock Text="Loading..." 
+                    <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_Loading}" 
                                FontSize="14" Foreground="White"
                                HorizontalAlignment="Center" Margin="0,0,0,10"/>
                     <ProgressBar IsIndeterminate="True" Width="200" Height="3"
@@ -233,7 +233,7 @@
                 <StackPanel Orientation="Horizontal">
                     <TextBlock Text="&#xE8E6;" FontFamily="Segoe MDL2 Assets" 
                                FontSize="13" VerticalAlignment="Center" Margin="0,0,8,0" Opacity="0.6"/>
-                    <TextBlock Text="Recent Free Games" FontSize="13" FontWeight="SemiBold"/>
+                    <TextBlock Text="{DynamicResource LOCAllKeyShop_Sidebar_FreeGames_Header}" FontSize="13" FontWeight="SemiBold"/>
                     <TextBlock x:Name="FreeGamesCountText" FontSize="11" Opacity="0.4"
                                VerticalAlignment="Center" Margin="8,0,0,0"/>
                 </StackPanel>
@@ -265,7 +265,7 @@
                                             </TextBlock.Text>
                                         </TextBlock>
                                         <Button Grid.Column="3" Style="{StaticResource IconBtn}"
-                                                ToolTip="Open" Click="OpenFreeGameUrl_Click" Tag="{Binding}">
+                                                ToolTip="{DynamicResource LOCAllKeyShop_Sidebar_Tooltip_Open}" Click="OpenFreeGameUrl_Click" Tag="{Binding}">
                                             <TextBlock Text="&#xE8A7;" FontFamily="Segoe MDL2 Assets" FontSize="11"/>
                                         </Button>
                                     </Grid>
@@ -275,7 +275,7 @@
                     </ItemsControl>
                 </ScrollViewer>
                 <TextBlock x:Name="NoFreeGamesText"
-                           Text="No free games found recently"
+                           Text="{DynamicResource LOCAllKeyShop_Sidebar_FreeGames_None}"
                            HorizontalAlignment="Center"
                            VerticalAlignment="Center"
                            Opacity="0.35" FontSize="12"
@@ -287,9 +287,9 @@
         <Border Grid.Row="4" Padding="16,6" Opacity="0.5"
                 BorderBrush="#15808080" BorderThickness="0,1,0,0">
             <StackPanel Orientation="Horizontal">
-                <TextBlock x:Name="GameCountText" Text="0 games monitored" FontSize="11"/>
+                <TextBlock x:Name="GameCountText" Text="{DynamicResource LOCAllKeyShop_Sidebar_Status_LastUpdate_Never}" FontSize="11"/>
                 <TextBlock Text="  &#x00B7;  " FontSize="11" Opacity="0.5"/>
-                <TextBlock x:Name="LastUpdateText" Text="Last update: never" FontSize="11"/>
+                <TextBlock x:Name="LastUpdateText" Text="{DynamicResource LOCAllKeyShop_Sidebar_Status_LastUpdate_Never}" FontSize="11"/>
             </StackPanel>
         </Border>
     </Grid>

@@ -53,7 +53,7 @@ namespace AllKeyShopExtension.Views
         {
             var dialog = new System.Windows.Forms.Form
             {
-                Text = "Add Game",
+                Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_AddGame"),
                 Width = 400,
                 Height = 150,
                 StartPosition = System.Windows.Forms.FormStartPosition.CenterParent
@@ -61,7 +61,7 @@ namespace AllKeyShopExtension.Views
 
             var label = new System.Windows.Forms.Label
             {
-                Text = "Game name:",
+                Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Dialog_GameName"),
                 Left = 10,
                 Top = 20,
                 Width = 100
@@ -76,7 +76,7 @@ namespace AllKeyShopExtension.Views
 
             var addButton = new System.Windows.Forms.Button
             {
-                Text = "Add",
+                Text = ResourceProvider.GetString("LOCAllKeyShop_Search_Confirm"),
                 Left = 120,
                 Top = 60,
                 Width = 100,
@@ -85,7 +85,7 @@ namespace AllKeyShopExtension.Views
 
             var cancelButton = new System.Windows.Forms.Button
             {
-                Text = "Cancel",
+                Text = ResourceProvider.GetString("LOCAllKeyShop_Search_Cancel"),
                 Left = 230,
                 Top = 60,
                 Width = 100,
@@ -114,13 +114,13 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Adding game...";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_Adding");
 
                 var added = priceService.AddWatchedGame(gameName);
                 if (added)
                 {
                     LoadGames();
-                    StatusText.Text = $"Game '{gameName}' added. Updating price...";
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_GameAdded"), gameName);
                     
                     // Update price immediately
                     var game = priceService.GetWatchedGameByName(gameName);
@@ -128,20 +128,20 @@ namespace AllKeyShopExtension.Views
                     {
                         await priceService.UpdateGamePrice(game);
                         LoadGames();
-                        StatusText.Text = "Game added successfully!";
+                        StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_GameAddedSuccess");
                     }
                 }
                 else
                 {
-                    StatusText.Text = $"The game '{gameName}' is already in the list.";
-                    MessageBox.Show($"The game '{gameName}' is already in the list.", "Game already exists", MessageBoxButton.OK, MessageBoxImage.Information);
+                    StatusText.Text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_AlreadyInList"), gameName);
+                    MessageBox.Show(string.Format(ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_AlreadyInList"), gameName), ResourceProvider.GetString("LOCAllKeyShop_Sidebar_Dialog_AlreadyExists_Title"), MessageBoxButton.OK, MessageBoxImage.Information);
                 }
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error adding game: {ex.Message}");
-                StatusText.Text = "Error while adding the game.";
-                MessageBox.Show($"Error: {ex.Message}", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_AddError");
+                MessageBox.Show($"Error: {ex.Message}", ResourceProvider.GetString("LOCAllKeyShop_Dialog_Error_Title"), MessageBoxButton.OK, MessageBoxImage.Error);
             }
             finally
             {
@@ -154,17 +154,17 @@ namespace AllKeyShopExtension.Views
             try
             {
                 ShowLoading(true);
-                StatusText.Text = "Updating prices...";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_Updating");
 
                 await priceService.UpdateAllPrices();
                 LoadGames();
 
-                StatusText.Text = "Prices updated!";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_Updated");
             }
             catch (Exception ex)
             {
                 logger.Error(ex, $"Error refreshing prices: {ex.Message}");
-                StatusText.Text = "Error while updating.";
+                StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_UpdateError");
             }
             finally
             {
@@ -180,8 +180,8 @@ namespace AllKeyShopExtension.Views
                 if (button?.Tag is int gameId)
                 {
                     var result = MessageBox.Show(
-                        "Are you sure you want to remove this game from the list?",
-                        "Confirm removal",
+                        ResourceProvider.GetString("LOCAllKeyShop_Dialog_ConfirmRemoval"),
+                        ResourceProvider.GetString("LOCAllKeyShop_Dialog_ConfirmRemoval_Title"),
                         MessageBoxButton.YesNo,
                         MessageBoxImage.Question);
 
@@ -189,7 +189,7 @@ namespace AllKeyShopExtension.Views
                     {
                         priceService.RemoveWatchedGame(gameId);
                         LoadGames();
-                        StatusText.Text = "Game removed.";
+                        StatusText.Text = ResourceProvider.GetString("LOCAllKeyShop_PriceMonitor_Status_GameRemoved");
                     }
                 }
             }

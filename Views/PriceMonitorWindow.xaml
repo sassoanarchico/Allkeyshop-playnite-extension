@@ -1,7 +1,7 @@
 <Window x:Class="AllKeyShopExtension.Views.PriceMonitorWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="AllKeyShop Price Monitor" 
+        Title="{DynamicResource LOCAllKeyShop_PriceMonitor_Title}" 
         Height="600" 
         Width="900"
         WindowStartupLocation="CenterScreen"

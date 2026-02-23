@@ -8,21 +8,21 @@
              Foreground="{DynamicResource TextBrush}">
     <ScrollViewer VerticalScrollBarVisibility="Auto">
         <StackPanel Margin="20">
-            <TextBlock Text="AllKeyShop Extension Settings" 
+            <TextBlock Text="{DynamicResource LOCAllKeyShop_Settings_Title}" 
                       FontSize="18" 
                       FontWeight="Bold" 
                       Margin="0,0,0,20"/>
 
             <!-- Notifications Section -->
-            <GroupBox Header="Notifications" Margin="0,0,0,20">
+            <GroupBox Header="{DynamicResource LOCAllKeyShop_Settings_Notifications_Header}" Margin="0,0,0,20">
                 <StackPanel Margin="10">
                     <CheckBox x:Name="NotificationsEnabledCheckBox" 
-                             Content="Enable notifications" 
+                             Content="{DynamicResource LOCAllKeyShop_Settings_Notifications_Enable}" 
                              Margin="0,5"
                              Checked="NotificationsEnabledCheckBox_Changed"
                              Unchecked="NotificationsEnabledCheckBox_Changed"/>
                     <CheckBox x:Name="PriceAlertsEnabledCheckBox" 
-                             Content="Enable price threshold alerts" 
+                             Content="{DynamicResource LOCAllKeyShop_Settings_Notifications_PriceAlerts}" 
                              Margin="0,5"
                              Checked="PriceAlertsEnabledCheckBox_Changed"
                              Unchecked="PriceAlertsEnabledCheckBox_Changed"/>
@@ -30,10 +30,10 @@
             </GroupBox>
 
             <!-- Update Intervals Section -->
-            <GroupBox Header="Update Intervals" Margin="0,0,0,20">
+            <GroupBox Header="{DynamicResource LOCAllKeyShop_Settings_Intervals_Header}" Margin="0,0,0,20">
                 <StackPanel Margin="10">
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Price update interval (minutes):" 
+                        <TextBlock Text="{DynamicResource LOCAllKeyShop_Settings_Intervals_PriceUpdate}" 
                                   Width="250" 
                                   VerticalAlignment="Center"/>
                         <TextBox x:Name="PriceUpdateIntervalTextBox" 
@@ -41,7 +41,7 @@
                                 TextChanged="PriceUpdateIntervalTextBox_TextChanged"/>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Margin="0,5">
-                        <TextBlock Text="Free games check interval (minutes):" 
+                        <TextBlock Text="{DynamicResource LOCAllKeyShop_Settings_Intervals_FreeGames}" 
                                   Width="250" 
                                   VerticalAlignment="Center"/>
                         <TextBox x:Name="FreeGamesCheckIntervalTextBox" 
@@ -52,7 +52,7 @@
             </GroupBox>
 
             <!-- Platforms Section -->
-            <GroupBox Header="Platforms for Free Games Notifications" Margin="0,0,0,20">
+            <GroupBox Header="{DynamicResource LOCAllKeyShop_Settings_Platforms_Header}" Margin="0,0,0,20">
                 <ScrollViewer MaxHeight="300" VerticalScrollBarVisibility="Auto">
                     <StackPanel Margin="10" x:Name="PlatformsStackPanel">
                         <!-- Platforms will be added dynamically -->
@@ -61,12 +61,12 @@
             </GroupBox>
 
             <!-- Open Price Monitor Button -->
-            <GroupBox Header="Price View" Margin="0,0,0,20">
+            <GroupBox Header="{DynamicResource LOCAllKeyShop_Settings_PriceView_Header}" Margin="0,0,0,20">
                 <StackPanel Margin="10">
-                    <TextBlock Text="Open the price monitoring window to view and manage monitored games." 
+                    <TextBlock Text="{DynamicResource LOCAllKeyShop_Settings_PriceView_Description}" 
                               TextWrapping="Wrap" 
                               Margin="0,0,0,10"/>
-                    <Button Content="Open Price Monitor" 
+                    <Button Content="{DynamicResource LOCAllKeyShop_Settings_PriceView_OpenButton}" 
                            HorizontalAlignment="Left" 
                            Padding="20,5"
                            Click="OpenPriceMonitorButton_Click"/>
@@ -74,7 +74,7 @@
             </GroupBox>
 
             <!-- Save Button -->
-            <Button Content="Save Settings" 
+            <Button Content="{DynamicResource LOCAllKeyShop_Settings_SaveButton}" 
                    HorizontalAlignment="Right" 
                    Padding="20,5"
                    Click="SaveButton_Click"/>

@@ -3,10 +3,12 @@ using Playnite.SDK.Plugins;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
+using System.Windows.Markup;
 using System.Windows.Media;
 using System.Windows.Threading;
 using AllKeyShopExtension.Data;
@@ -38,6 +40,7 @@ namespace AllKeyShopExtension
 
             // Initialize lazily when needed
             InitializeIfNeeded();
+            LoadPluginLocalization();
         }
 
         private void InitializeIfNeeded()
@@ -99,6 +102,54 @@ namespace AllKeyShopExtension
                     logger.Error(ex, "Failed to initialize AllKeyShop Extension");
                     // Don't throw - allow extension to load even if initialization fails
                 }
+            }
+        }
+
+        private void LoadPluginLocalization()
+        {
+            try
+            {
+                var extensionDir = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var locDir = Path.Combine(extensionDir, "Localization");
+
+                // Always load English as fallback
+                LoadResourceDictionary(Path.Combine(locDir, "en_US.xaml"));
+
+                // Load user's language if different from English
+                var language = PlayniteApi.ApplicationSettings.Language;
+                if (!string.IsNullOrEmpty(language) && language != "en_US")
+                {
+                    LoadResourceDictionary(Path.Combine(locDir, $"{language}.xaml"));
+                }
+
+                logger.Info($"Localization loaded for language: {PlayniteApi.ApplicationSettings.Language}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, "Failed to load localization resources");
+            }
+        }
+
+        private void LoadResourceDictionary(string path)
+        {
+            if (!File.Exists(path))
+            {
+                logger.Debug($"Localization file not found: {path}");
+                return;
+            }
+
+            try
+            {
+                using (var stream = new FileStream(path, FileMode.Open, FileAccess.Read))
+                {
+                    var resourceDict = (ResourceDictionary)XamlReader.Load(stream);
+                    Application.Current.Resources.MergedDictionaries.Add(resourceDict);
+                }
+                logger.Debug($"Loaded localization: {path}");
+            }
+            catch (Exception ex)
+            {
+                logger.Error(ex, $"Failed to load localization file: {path}");
             }
         }
 
@@ -211,7 +262,7 @@ namespace AllKeyShopExtension
                     var errorControl = new UserControl();
                     errorControl.Content = new TextBlock 
                     { 
-                        Text = "Error loading settings. Check the logs for details.",
+                        Text = ResourceProvider.GetString("LOCAllKeyShop_Plugin_Error_SettingsLoad"),
                         Margin = new Thickness(20),
                         TextWrapping = TextWrapping.Wrap
                     };
@@ -253,7 +304,7 @@ namespace AllKeyShopExtension
                             var errorControl = new UserControl();
                             errorControl.Content = new TextBlock
                             {
-                                Text = "Error loading the AllKeyShop sidebar. Check the logs.",
+                                Text = ResourceProvider.GetString("LOCAllKeyShop_Plugin_Error_SidebarLoad"),
                                 Margin = new Thickness(20),
                                 TextWrapping = TextWrapping.Wrap
                             };

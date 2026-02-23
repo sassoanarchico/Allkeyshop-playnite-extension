@@ -5,6 +5,28 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/).
 
+## [1.2.0] - 2026-02-23
+
+### Added
+- **Multi-language localization**: Full UI localization for the top 5 European languages:
+  - 🇬🇧 English (en_US) — default/fallback
+  - 🇮🇹 Italian (it_IT)
+  - 🇪🇸 Spanish (es_ES)
+  - 🇫🇷 French (fr_FR)
+  - 🇩🇪 German (de_DE)
+- **~120 localization keys** covering all UI strings: Settings, Price Monitor, Search, Sidebar, Threshold dialogs, Notifications, Plugin error messages.
+- **Automatic language detection**: The extension loads the user's Playnite language automatically, falling back to English for unsupported languages.
+- **Localization infrastructure**: XAML ResourceDictionary files in `Localization/` folder, loaded at plugin startup via `LoadPluginLocalization()`.
+
+### Changed
+- All XAML views now use `{DynamicResource LOCAllKeyShop_...}` bindings instead of hardcoded strings.
+- All C# code-behind files now use `ResourceProvider.GetString()` with `string.Format()` for parameterized messages.
+- NotificationService now uses localized strings for all Playnite and Windows toast notifications.
+- Plugin.cs updated to load localization ResourceDictionaries on startup.
+- `.csproj` updated to include `Localization/*.xaml` files in build output.
+
+> **⚠️ Note:** Translations were generated using artificial intelligence and may contain errors or inaccuracies. If you find any issues, please report them or submit a correction.
+
 ## [1.1.0] - 2026-02-20
 
 ### Added

@@ -65,7 +65,7 @@ namespace AllKeyShopExtension.Services
                     var games = platformGroup.ToList();
 
                     var message = BuildFreeGamesMessage(games);
-                    var text = $"🎮 New free games on {platform}!\n{message}";
+                    var text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_FreeGames_Message"), platform) + "\n" + message;
 
                     logger.Info($"Sending free games notification: {text}");
 
@@ -87,7 +87,7 @@ namespace AllKeyShopExtension.Services
 
                     // Windows toast
                     SendWindowsToast(
-                        $"Free Games on {platform}!",
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_FreeGames_Title"), platform),
                         string.Join(", ", games.Take(3).Select(g => g.GameName)) +
                             (games.Count > 3 ? $" (+{games.Count - 3} more)" : ""),
                         firstUrl
@@ -123,8 +123,8 @@ namespace AllKeyShopExtension.Services
                     && game.KeyPrice.Value <= game.KeyPriceThreshold.Value)
                 {
                     var sellerText = !string.IsNullOrEmpty(game.KeySeller) ? $" ({game.KeySeller})" : "";
-                    var text = $"🔑 {game.GameName} - Key price dropped to {game.KeyPrice.Value:0.00}€{sellerText}" +
-                               $" | Threshold: {game.KeyPriceThreshold.Value:0.00}€";
+                    var text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_KeyPrice_Text"),
+                        game.GameName, game.KeyPrice.Value.ToString("0.00"), sellerText, game.KeyPriceThreshold.Value.ToString("0.00"));
                     var notificationId = $"allkeyshop-key-price-alert-{game.Id}";
 
                     logger.Info($"Sending key price alert: {text}");
@@ -135,8 +135,9 @@ namespace AllKeyShopExtension.Services
                     ));
 
                     SendWindowsToast(
-                        $"Key Price Alert: {game.GameName}",
-                        $"Key: {game.KeyPrice.Value:0.00}€{sellerText} (Threshold: {game.KeyPriceThreshold.Value:0.00}€)",
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_KeyPrice_Title"), game.GameName),
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_KeyPrice_Toast"),
+                            game.KeyPrice.Value.ToString("0.00"), sellerText, game.KeyPriceThreshold.Value.ToString("0.00")),
                         url
                     );
                 }
@@ -146,8 +147,8 @@ namespace AllKeyShopExtension.Services
                     && game.AccountPrice.Value <= game.AccountPriceThreshold.Value)
                 {
                     var sellerText = !string.IsNullOrEmpty(game.AccountSeller) ? $" ({game.AccountSeller})" : "";
-                    var text = $"👤 {game.GameName} - Account price dropped to {game.AccountPrice.Value:0.00}€{sellerText}" +
-                               $" | Threshold: {game.AccountPriceThreshold.Value:0.00}€";
+                    var text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_AccountPrice_Text"),
+                        game.GameName, game.AccountPrice.Value.ToString("0.00"), sellerText, game.AccountPriceThreshold.Value.ToString("0.00"));
                     var notificationId = $"allkeyshop-account-price-alert-{game.Id}";
 
                     logger.Info($"Sending account price alert: {text}");
@@ -158,8 +159,9 @@ namespace AllKeyShopExtension.Services
                     ));
 
                     SendWindowsToast(
-                        $"Account Price Alert: {game.GameName}",
-                        $"Account: {game.AccountPrice.Value:0.00}€{sellerText} (Threshold: {game.AccountPriceThreshold.Value:0.00}€)",
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_AccountPrice_Title"), game.GameName),
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_AccountPrice_Toast"),
+                            game.AccountPrice.Value.ToString("0.00"), sellerText, game.AccountPriceThreshold.Value.ToString("0.00")),
                         url
                     );
                 }
@@ -180,10 +182,13 @@ namespace AllKeyShopExtension.Services
             try
             {
                 var priceChange = game.LastPrice.Value - oldPrice;
-                var direction = priceChange > 0 ? "increased" : "decreased";
+                var direction = priceChange > 0 
+                    ? ResourceProvider.GetString("LOCAllKeyShop_Notify_PriceUpdate_Increased") 
+                    : ResourceProvider.GetString("LOCAllKeyShop_Notify_PriceUpdate_Decreased");
                 var changeText = Math.Abs(priceChange).ToString("0.00") + "€";
 
-                var text = $"📊 {game.GameName}: price {direction} by {changeText}. New price: {game.LastPrice.Value:0.00}€";
+                var text = string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_PriceUpdate_Text"),
+                    game.GameName, direction, changeText, game.LastPrice.Value.ToString("0.00"));
 
                 logger.Info($"Sending price update notification: {text}");
 
@@ -205,8 +210,8 @@ namespace AllKeyShopExtension.Services
                 if (priceChange < 0)
                 {
                     SendWindowsToast(
-                        $"Price updated: {game.GameName}",
-                        $"Price dropped by {changeText}. New price: {game.LastPrice.Value:0.00}€"
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_PriceUpdate_Title"), game.GameName),
+                        string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_PriceUpdate_Toast"), changeText, game.LastPrice.Value.ToString("0.00"))
                     );
                 }
             }
@@ -219,7 +224,7 @@ namespace AllKeyShopExtension.Services
         private string BuildFreeGamesMessage(List<FreeGame> games)
         {
             var sb = new StringBuilder();
-            sb.AppendLine($"Found {games.Count} new free game(s):");
+            sb.AppendLine(string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_FreeGames_Found"), games.Count));
 
             foreach (var game in games.Take(5)) // Show max 5 games
             {
@@ -228,7 +233,7 @@ namespace AllKeyShopExtension.Services
 
             if (games.Count > 5)
             {
-                sb.AppendLine($"... and {games.Count - 5} more games");
+                sb.AppendLine(string.Format(ResourceProvider.GetString("LOCAllKeyShop_Notify_FreeGames_AndMore"), games.Count - 5));
             }
 
             return sb.ToString();

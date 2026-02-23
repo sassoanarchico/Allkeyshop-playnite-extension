@@ -4,7 +4,7 @@
 
 **Playnite extension that monitors game prices from AllKeyShop**
 
-[![Version](https://img.shields.io/badge/version-1.1.0-blue.svg)]()
+[![Version](https://img.shields.io/badge/version-1.2.0-blue.svg)]()
 [![Platform](https://img.shields.io/badge/platform-Playnite%2010+-purple.svg)]()
 [![Framework](https://img.shields.io/badge/.NET-Framework%204.8-green.svg)]()
 [![License](https://img.shields.io/badge/license-MIT-lightgrey.svg)](LICENSE)
@@ -68,6 +68,16 @@ Monitor your game prices from AllKeyShop, get Windows notifications when a price
 | **Adaptive Theme** | Automatically adapts to any Playnite theme (dark/light) |
 | **Advanced Search** | Search window with image preview, price, and platform |
 
+### Localization
+| Feature | Description |
+|---------|-------------|
+| **5 Languages** | English, Italian, Spanish, French, German |
+| **Auto-detection** | Automatically loads the user's Playnite language |
+| **Full Coverage** | ~120 localization keys covering all UI strings, dialogs, and notifications |
+| **Fallback** | Falls back to English for unsupported languages |
+
+> **⚠️ Note:** Translations were generated using artificial intelligence and may contain errors or inaccuracies. If you find any issues, please report them or submit a correction.
+
 ---
 
 ## Screenshots
@@ -81,7 +91,7 @@ Monitor your game prices from AllKeyShop, get Windows notifications when a price
 
 ### Quick Method (.pext file)
 
-1. Download `AllKeyShopExtension-1.1.0.pext` from the [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases) page
+1. Download `AllKeyShopExtension-1.2.0.pext` from the [Releases](https://github.com/sassoanarchico/allkeyshop-playnite/releases) page
 2. In Playnite: **Menu > Extensions > Install extension from file**
 3. Select the downloaded `.pext` file
 4. **Restart Playnite**
@@ -178,6 +188,13 @@ AllKeyShopExtension/
 │   ├── SettingsView           # Settings page
 │   └── PriceMonitorView/Window # Price monitor view (legacy)
 │
+├── Localization/
+│   ├── en_US.xaml             # English (default/fallback)
+│   ├── it_IT.xaml             # Italian
+│   ├── es_ES.xaml             # Spanish
+│   ├── fr_FR.xaml             # French
+│   └── de_DE.xaml             # German
+│
 ├── Utilities/
 │   └── HttpClientHelper.cs    # HTTP client wrapper
 │
@@ -246,6 +263,7 @@ See [CHANGELOG.md](CHANGELOG.md) for the complete list of changes.
 
 ### Latest versions
 
+- **v1.2.0** — Multi-language localization (EN, IT, ES, FR, DE), ~120 keys, auto-detection
 - **v1.1.0** — Dual price thresholds (Key + Account), independent alerts, fixed unwanted account notifications
 - **v1.0.0** — Professional card-based UI, game thumbnails, MDL2 icons, timer fix, broken icons fix
 - **v0.2.4** — Edit price threshold, Windows Toast notifications

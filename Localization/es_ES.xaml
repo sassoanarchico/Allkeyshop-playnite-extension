@@ -1,0 +1,155 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+
+  <!-- ==================== AJUSTES ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Settings_Title">Ajustes de AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Notifications_Header">Notificaciones</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Notifications_Enable">Habilitar notificaciones</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Notifications_PriceAlerts">Habilitar alertas de umbral de precio</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Intervals_Header">Intervalos de actualización</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Intervals_PriceUpdate">Intervalo de actualización de precios (minutos):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Intervals_FreeGames">Intervalo de comprobación de juegos gratis (minutos):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Platforms_Header">Plataformas para notificaciones de juegos gratis</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_PriceView_Header">Vista de precios</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_PriceView_Description">Abre la ventana de monitoreo de precios para ver y gestionar los juegos monitoreados.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_PriceView_OpenButton">Abrir Monitor de Precios</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_SaveButton">Guardar ajustes</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Save_IntervalError_Price">El intervalo de actualización de precios debe ser un número positivo.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Save_IntervalError_FreeGames">El intervalo de comprobación de juegos gratis debe ser un número positivo.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Save_Success">¡Ajustes guardados correctamente!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Save_Error">Error al guardar: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Service_Unavailable">El servicio de precios no está disponible. Reinicia Playnite e inténtalo de nuevo.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Settings_Service_Unavailable_Title">Servicio no disponible</sys:String>
+
+  <!-- ==================== MONITOR DE PRECIOS ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Title">Monitor de Precios AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_AddGame">Añadir juego</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Refresh">Actualizar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Column_Game">Juego</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Column_Price">Precio</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Column_Seller">Vendedor</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Column_LastUpdate">Última actualización</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Column_Actions">Acciones</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Remove">Eliminar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Loading">Cargando...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_EmptyState">Ningún juego monitoreado</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_EmptyState_Hint">Haz clic en 'Añadir juego' para empezar a monitorear precios</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_Adding">Añadiendo juego...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_GameAdded">Juego '{0}' añadido. Actualizando precio...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_GameAddedSuccess">¡Juego añadido correctamente!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_AlreadyInList">El juego '{0}' ya está en la lista.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_AddError">Error al añadir el juego.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_Updating">Actualizando precios...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_Updated">¡Precios actualizados!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_UpdateError">Error al actualizar.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Status_GameRemoved">Juego eliminado.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_PriceMonitor_Dialog_GameName">Nombre del juego:</sys:String>
+
+  <!-- ==================== VENTANA DE BÚSQUEDA ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Search_WindowTitle">Buscar juego en AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Title">Buscar un juego en AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Button">Buscar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Status_Default">Introduce el nombre del juego y pulsa Buscar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Status_Searching">Buscando '{0}'...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Status_Found">{0} resultados encontrados. Selecciona el juego correcto.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Status_NotFound">No se encontraron resultados. Prueba con otro nombre.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Status_Error">Error de búsqueda: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_NotAvailable">No disponible</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_KeyThreshold">Umbral de clave (€):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_AccountThreshold">Umbral de cuenta (€):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Searching">Buscando...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Confirm">Añadir</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Search_Cancel">Cancelar</sys:String>
+
+  <!-- ==================== BARRA LATERAL ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Title">Monitor de Precios AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Subtitle">Monitorea los precios de tus juegos y descubre juegos gratis</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Add">Añadir</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Refresh">Actualizar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Free">Gratis</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_Add">Añadir un juego a monitorear</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_Refresh">Actualizar todos los precios</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_Free">Comprobar juegos gratis</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Key">Clave: </sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Account">Cuenta: </sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_OpenPage">Abrir página AllKeyShop</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_BestOffer">Ir a la mejor oferta</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_RefreshPrice">Actualizar precio</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_EditThreshold">Editar umbral de precio</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_Remove">Eliminar de la lista</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_EmptyState">Ningún juego monitoreado</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_EmptyState_Hint">Haz clic en 'Añadir' para empezar a monitorear precios</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Loading">Cargando...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_FreeGames_Header">Juegos gratis recientes</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_FreeGames_None">No se encontraron juegos gratis recientemente</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Tooltip_Open">Abrir</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_GamesMonitored">{0} juegos monitoreados</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_LastUpdate">Última actualización: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_LastUpdate_Never">Última actualización: nunca</sys:String>
+
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_Adding">Añadiendo '{0}'...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_UpdatingPrice">Actualizando precio de '{0}'...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_AddedSuccess">¡'{0}' añadido correctamente!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_AlreadyInList">'{0}' ya está en la lista.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Dialog_AlreadyExists">El juego '{0}' ya está en la lista de monitoreados.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Dialog_AlreadyExists_Title">Juego ya existente</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_AddError">Error al añadir el juego.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_Updating">Actualizando precios...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_Updated">¡Precios actualizados!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_UpdateError">Error al actualizar precios.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_SearchingFree">Buscando juegos gratis...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_FreeGamesFound">{0} juegos gratis recientes encontrados</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_FreeGamesError">Error al comprobar juegos gratis.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_UpdatingSingle">Actualizando '{0}'...</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_UpdatedSingle">¡'{0}' actualizado!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_UpdateSingleError">Error de actualización.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_SearchWindowError">Error al abrir la ventana de búsqueda.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Sidebar_Status_AlertsTriggered">¡Precios actualizados! ¡{0} alerta(s) de precio!</sys:String>
+
+  <!-- ==================== DIÁLOGO DE UMBRALES ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Threshold_WindowTitle">Editar umbrales - {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Description">Umbrales de precio para "{0}":</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Key_Current">Umbral de clave (actual: {0}€):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Key_NotSet">Umbral de clave (no establecido):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Account_Current">Umbral de cuenta (actual: {0}€):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Account_NotSet">Umbral de cuenta (no establecido):</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Save">Guardar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_RemoveAll">Eliminar todo</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Cancel">Cancelar</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Error_InvalidKey">Introduce un precio de clave válido (ej: 15.50) o deja vacío.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Error_InvalidAccount">Introduce un precio de cuenta válido (ej: 10.00) o deja vacío.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Error_Title">Valor no válido</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Status_Updated">Umbrales de '{0}' actualizados: {1}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Status_Removed">Todos los umbrales de '{0}' eliminados</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Threshold_Status_Error">Error al editar el umbral.</sys:String>
+
+  <!-- ==================== DIÁLOGOS COMUNES ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Dialog_ConfirmRemoval">¿Estás seguro de que quieres eliminar este juego de la lista?</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Dialog_ConfirmRemoval_Title">Confirmar eliminación</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Dialog_Error_Title">Error</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Dialog_Success_Title">Éxito</sys:String>
+
+  <!-- ==================== PLUGIN / ERRORES ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Plugin_Error_SettingsLoad">Error al cargar los ajustes. Revisa los registros para más detalles.</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Plugin_Error_SidebarLoad">Error al cargar la barra lateral de AllKeyShop. Revisa los registros.</sys:String>
+
+  <!-- ==================== NOTIFICACIONES ==================== -->
+  <sys:String x:Key="LOCAllKeyShop_Notify_FreeGames_Title">¡Juegos gratis en {0}!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_FreeGames_Message">🎮 ¡Nuevos juegos gratis en {0}!</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_FreeGames_More">(+{0} más)</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_FreeGames_Found">{0} nuevos juegos gratis encontrados:</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_FreeGames_AndMore">... y {0} juegos más</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_KeyPrice_Text">🔑 {0} - Precio de clave bajó a {1}€{2} | Umbral: {3}€</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_KeyPrice_Title">Alerta de precio de clave: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_KeyPrice_Toast">Clave: {0}€{1} (Umbral: {2}€)</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_AccountPrice_Text">👤 {0} - Precio de cuenta bajó a {1}€{2} | Umbral: {3}€</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_AccountPrice_Title">Alerta de precio de cuenta: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_AccountPrice_Toast">Cuenta: {0}€{1} (Umbral: {2}€)</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_PriceUpdate_Increased">subió</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_PriceUpdate_Decreased">bajó</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_PriceUpdate_Text">📊 {0}: precio {1} en {2}. Nuevo precio: {3}€</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_PriceUpdate_Title">Precio actualizado: {0}</sys:String>
+  <sys:String x:Key="LOCAllKeyShop_Notify_PriceUpdate_Toast">Precio bajó {0}. Nuevo precio: {1}€</sys:String>
+
+</ResourceDictionary>
