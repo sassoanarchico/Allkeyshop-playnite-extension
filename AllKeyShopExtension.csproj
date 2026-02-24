@@ -41,6 +41,16 @@
     </Compile>
   </ItemGroup>
 
+  <!-- Extension metadata and icon - copy to output -->
+  <ItemGroup>
+    <None Include="extension.yaml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="icon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
   <!-- Localization files - copy to output as content -->
   <ItemGroup>
     <None Include="Localization\*.xaml">
